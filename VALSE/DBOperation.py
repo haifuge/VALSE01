@@ -26,4 +26,3 @@ class DBOperator():
 
 
 #  mapId, personId, eventId, map_x, map_y, date_time, map_url
-# test changes.
