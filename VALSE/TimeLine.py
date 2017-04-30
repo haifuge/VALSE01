@@ -268,7 +268,7 @@ class EventGrid(QWidget):
         # grid left blank margin
         cWidth=int(width*0.07)
         # gird right blank margin
-        grWidth=int(width*0.03)
+        grWidth=int(width*0.97)
         qp.setPen(QPen(Qt.black, 1, Qt.SolidLine))
         
 
@@ -289,8 +289,8 @@ class EventGrid(QWidget):
         pen = QPen(QColor(122, 122, 32))
         qp.setPen(pen)
         qp.setBrush(brush)
-        qp.drawRect(cWidth, 0, self.leftXPos, height)
-        qp.drawRect(self.rightXPos,0,grWidth, height)
+        qp.drawRect(cWidth, 0, self.leftXPos-cWidth, height)
+        qp.drawRect(self.rightXPos,0,grWidth-self.rightXPos, height)
 
     def setLeftLineXPos(self, xPos):
         self.leftXPos=xPos
@@ -339,8 +339,8 @@ class GridArea(QWidget):
         gridwidth=self.size().width()-25
         self.widget.setGeometry(0, 0, gridwidth, self.widget.eventNum * self.widget.rowHeight)
         # set leftbtn and rightbtn position and moving range
-        leftRange=gridwidth*0.07-self.leftbtn.size().width()/2+1
-        rightRange=gridwidth*0.97-self.rightbtn.size().width()/2+1
+        leftRange=gridwidth*0.07-self.leftbtn.size().width()+1
+        rightRange=gridwidth*0.97+1
         yPos=self.size().height()/2-self.leftbtn.size().height()/2;
         self.leftbtn.setYpos(yPos)
         self.rightbtn.setYpos(yPos)
@@ -364,17 +364,20 @@ class GridArea(QWidget):
         self.rightbtn.setXrange(self.leftbtn.x()+self.leftbtn.size().width(), rightRange)
         self.widget.setLeftLineXPos(self.leftbtn.x())
         self.widget.setRightLineXPos(self.rightbtn.x())
+
+        self.widget.setLeftLineXPos(self.leftbtn.x()+self.leftbtn.size().width()-2)
+        self.widget.setLeftLineXPos(self.leftbtn.x()+self.leftbtn.size().width()-2)
         
     def leftbtnRelease(self):
         self.leftbtnXPosRatio=self.leftbtn.x()/(self.size().width()-25)
     def rightbtnRelease(self):
         self.rightbtnXPosRatio=self.rightbtn.x()/(self.size().width()-25)
     def leftbtnMove(self):
-        self.widget.setLeftLineXPos(self.leftbtn.x())
+        self.widget.setLeftLineXPos(self.leftbtn.x()+self.leftbtn.size().width()-2)
         self.widget.repaint()
         self.repaint()
     def rightbtnMove(self):
-        self.widget.setRightLineXPos(self.rightbtn.x())
+        self.widget.setRightLineXPos(self.rightbtn.x()-2)
         self.widget.repaint()
         self.repaint()
 
