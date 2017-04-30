@@ -265,11 +265,13 @@ class EventGrid(QWidget):
         width = self.size().width()
         cHeight=self.rowHeight
         height=self.eventNum*self.rowHeight
-        # C1 width
+        # grid left blank margin
         cWidth=int(width*0.07)
-        # gird right width
+        # gird right blank margin
         grWidth=int(width*0.03)
         qp.setPen(QPen(Qt.black, 1, Qt.SolidLine))
+        
+
         # draw horizontal lines
         for i in range(self.eventNum):
             qp.drawLine(0, i*cHeight, width, i*cHeight)
@@ -282,8 +284,22 @@ class EventGrid(QWidget):
         # draw middle horizontal lines
         for i in range(self.eventNum):
             qp.drawLine(0,(i+0.5)*cHeight, width, (i+0.5)*cHeight)
+        # draw left and right vertical lines and shadow area behind left and right button
+        brush = QBrush(Qt.Dense6Pattern)
+        pen = QPen(QColor(122, 122, 32))
+        qp.setPen(pen)
+        qp.setBrush(brush)
+        qp.drawRect(cWidth, 0, self.leftXPos, height)
+        qp.drawRect(self.rightXPos,0,grWidth, height)
+
+    def setLeftLineXPos(self, xPos):
+        self.leftXPos=xPos
+    def setRightLineXPos(self, xPos):
+        self.rightXPos=xPos
 
 class GridArea(QWidget):
+    # tag for initializing left and right button position
+    initialPosition=True
     def __init__(self):
         super().__init__()
         self.initUI()
@@ -291,7 +307,7 @@ class GridArea(QWidget):
     def initUI(self):
         self.setContentsMargins(QMargins(0,0,0,0))
         self.widget=EventGrid()
-        self.widget.setGeometry(0,0,self.size().width(), self.widget.eventNum*self.widget.rowHeight)
+        #self.widget.setGeometry(0,0,self.size().width(), self.widget.eventNum*self.widget.rowHeight)
         scroll=QScrollArea()
         scroll.setVerticalScrollBarPolicy(Qt.ScrollBarAlwaysOn)
         # scroll.setHorizontalScrollBarPolicy(Qt.ScrollBarAsNeeded)
@@ -303,8 +319,64 @@ class GridArea(QWidget):
         vlayout.addWidget(scroll)
         self.setLayout(vlayout)
 
+        self.leftbtn=DragButton("", self)
+        self.leftbtn.resize(10, 30)
+        self.leftbtn.setXrange(0, self.size().width())
+
+        self.rightbtn=DragButton("", self)
+        self.rightbtn.resize(10, 30)
+        self.rightbtn.setXrange(0, self.size().width())
+        
+        self.leftbtn.setRightBtn(self.rightbtn)
+        self.rightbtn.setLeftBtn(self.leftbtn)
+        self.leftbtn.mouseReleaseSignal.connect(self.leftbtnRelease)
+        self.rightbtn.mouseReleaseSignal.connect(self.rightbtnRelease)
+        self.leftbtn.mouseMoveSignal.connect(self.leftbtnMove)
+        self.rightbtn.mouseMoveSignal.connect(self.rightbtnMove)
+
+    resizetimes=0
     def resizeEvent(self, QResizeEvent):
-        self.widget.setGeometry(0, 0, self.size().width()-25, self.widget.eventNum * self.widget.rowHeight)
+        gridwidth=self.size().width()-25
+        self.widget.setGeometry(0, 0, gridwidth, self.widget.eventNum * self.widget.rowHeight)
+        # set leftbtn and rightbtn position and moving range
+        leftRange=gridwidth*0.07-self.leftbtn.size().width()/2+1
+        rightRange=gridwidth*0.97-self.rightbtn.size().width()/2+1
+        yPos=self.size().height()/2-self.leftbtn.size().height()/2;
+        self.leftbtn.setYpos(yPos)
+        self.rightbtn.setYpos(yPos)
+        self.resizetimes=self.resizetimes+1
+        if self.initialPosition:
+            self.leftbtn.move(leftRange, yPos)
+            self.rightbtn.move(rightRange-self.rightbtn.x(), yPos)
+            self.leftbtnXPosRatio = self.leftbtn.x() / gridwidth
+            self.rightbtnXPosRatio = self.rightbtn.x() / gridwidth
+            self.initialPosition=False
+        else:
+            if self.resizetimes==2:
+                self.leftbtn.move(leftRange,yPos)
+                self.rightbtn.move(rightRange, yPos)
+                self.leftbtnXPosRatio = self.leftbtn.x() / gridwidth
+                self.rightbtnXPosRatio = self.rightbtn.x() / gridwidth
+            else:
+                self.leftbtn.move(self.leftbtnXPosRatio*gridwidth, yPos)
+                self.rightbtn.move(self.rightbtnXPosRatio*gridwidth, yPos)
+        self.leftbtn.setXrange(leftRange, self.rightbtn.x()-self.leftbtn.size().width())
+        self.rightbtn.setXrange(self.leftbtn.x()+self.leftbtn.size().width(), rightRange)
+        self.widget.setLeftLineXPos(self.leftbtn.x())
+        self.widget.setRightLineXPos(self.rightbtn.x())
+        
+    def leftbtnRelease(self):
+        self.leftbtnXPosRatio=self.leftbtn.x()/(self.size().width()-25)
+    def rightbtnRelease(self):
+        self.rightbtnXPosRatio=self.rightbtn.x()/(self.size().width()-25)
+    def leftbtnMove(self):
+        self.widget.setLeftLineXPos(self.leftbtn.x())
+        self.widget.repaint()
+        self.repaint()
+    def rightbtnMove(self):
+        self.widget.setRightLineXPos(self.rightbtn.x())
+        self.widget.repaint()
+        self.repaint()
 
 class Color(object):
     red = QColor(Qt.red)
@@ -432,7 +504,7 @@ class TestDragButton(QWidget):
 if __name__=='__main__':
     app=QApplication(sys.argv)
     ex=TimeLine()
-    # ex=GridArea()
+    #ex=GridArea()
     # ex=EventGrid()
     # ex=TestDragButton()
     # ex=Tileline()
