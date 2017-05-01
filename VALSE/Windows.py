@@ -23,7 +23,7 @@ class MainWindow(QMainWindow):
             self.count=self.count+1
             sub=QMdiSubWindow()
             sub.setWidget(TimeLine.TimeLine())
-            sub.setWindowTitle("subwindow"+str(self.count))
+            sub.setWindowTitle("TimeLine")
             self.mdi.addSubWindow(sub)
             sub.show()
         if q.text()=='Cascade':
