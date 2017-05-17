@@ -4,7 +4,7 @@
     <SchemaVersion>2.0</SchemaVersion>
     <ProjectGuid>769ad472-e136-4d89-b469-0183ffafddb6</ProjectGuid>
     <ProjectHome>.</ProjectHome>
-    <StartupFile>Windows.py</StartupFile>
+    <StartupFile>DateMenu.py</StartupFile>
     <SearchPath>
     </SearchPath>
     <WorkingDirectory>.</WorkingDirectory>
@@ -22,6 +22,9 @@
   </PropertyGroup>
   <ItemGroup>
     <Compile Include="DataEntity.py" />
+    <Compile Include="DateMenu.py">
+      <SubType>Code</SubType>
+    </Compile>
     <Compile Include="DBOperation.py" />
     <Compile Include="TimeLine.py" />
     <Compile Include="Timer.py" />
