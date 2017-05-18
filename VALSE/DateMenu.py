@@ -1,6 +1,6 @@
 import sys
-from PyQt5.QtWidgets import QWidget, QCalendarWidget, QLabel,QApplication, QPushButton, QTextEdit, QToolButton, QComboBox
-from PyQt5.QtCore import QDate, pyqtSignal, Qt
+from PyQt5.QtWidgets import *
+from PyQt5.QtCore import *
 from PyQt5.QtGui import *
 
 class DateMenu(QWidget):
@@ -94,13 +94,16 @@ class DateMenu(QWidget):
         self.btnLocation.resize(txtWidth,txtHeight)
 
         #  btn date click
-        self.btnDateStart.clicked.connect(self.btnClicked)
-        self.btnDateEnd.clicked.connect(self.btnClicked)
+        self.btnDateStart.clicked.connect(self.btnDateClicked)
+        self.btnDateEnd.clicked.connect(self.btnDateClicked)
         self.setGeometry(300,300,300,300)
         self.ds=DateSelector(self)
         self.ds.signal[str].connect(self.setbtnText)
         self.ds.setWindowFlags(Qt.FramelessWindowHint)
-        self.dialog=self.ds
+        #self.dialog=self.ds
+
+        self.cp=CustomPanel(self)
+        self.cp.setWindowFlags(Qt.FramelessWindowHint)
 
         # btn frequency click
         self.btnWeekly.clicked.connect(self.frequencyClicked)
@@ -118,18 +121,27 @@ class DateMenu(QWidget):
             self.btnYearly.setChecked(False)
         if self.freqSender!=self.btnCustom:
             self.btnCustom.setChecked(False)
+        if self.freqSender==self.btnCustom:
+            if self.btnCustom.isChecked():
+                print(self.btnCustom.isChecked())
+                point=self.btnCustom.rect().topRight()
+                global_point=self.btnCustom.mapToGlobal(point)
+                self.cp.setPosition(global_point.x(),global_point.y())
+                self.cp.exec_()
         frequency=self.freqSender.text()
+
         
-    def btnClicked(self):
+    def btnDateClicked(self):
         self.btnSender=self.sender()
         point=self.btnSender.rect().topRight()
         global_point=self.btnSender.mapToGlobal(point)
         self.ds.setPosition(global_point.x(), global_point.y())
-        self.dialog.show()
+        #self.dialog.show()
+        self.ds.exec_()
     def setbtnText(self, s):
         self.btnSender.setText(s)
 
-class DateSelector(QWidget):
+class DateSelector(QDialog):
     signal=pyqtSignal(str)
     def __init__(self, parent=None):
         super().__init__()
@@ -138,16 +150,72 @@ class DateSelector(QWidget):
         self.cal=QCalendarWidget(self)
         self.cal.setGridVisible(True)
         self.cal.setGeometry(0,0,370,250)
-        self.cal.clicked[QDate].connect(self.showDate)
+        self.cal.clicked[QDate].connect(self.emitDate)
         self.lbl=QLabel(self)
         date=self.cal.selectedDate()
         self.resize(self.cal.size())
         self.setWindowTitle('Calendar')
-    def showDate(self, date):
+    def emitDate(self, date):
         self.close()
         self.signal.emit(date.toString('MM/dd/yy'))
     def setPosition(self, x,y):
         self.move(x,y)
+
+class CustomPanel(QDialog):
+    def __init__(self, parent=None):
+        super().__init__(parent)
+        self.initUI()
+    def initUI(self):
+        self.resize(250,250)
+        vlayout=QVBoxLayout(self)
+        cf=CustomFrequency()
+        vlayout.addWidget(cf)
+        self.setLayout(vlayout)
+    def setPosition(self, x,y):
+        self.move(x,y)
+class CustomFrequency(QWidget):
+    def __init__(self):
+        super().__init__()
+        self.initUI()
+    def initUI(self):
+        self.resize(200,200)
+        txtX=100
+        txtY=20
+         # textEdit size
+        txtWidth=120
+        txtHeight=27
+        # row height
+        yInterval=30
+        lblFrequency=QLabel(self)
+        lblFrequency.setText('Frequency:')
+        lblFrequency.adjustSize()
+        lblFrequency.move(20,txtY)
+        self.btnWeekly=QPushButton(self)
+        self.btnWeekly.setText('Weekly')
+        self.btnWeekly.setCheckable(True)
+        self.btnWeekly.move(txtX,txtY)
+        self.btnWeekly.resize(txtWidth,txtHeight)
+
+        txtY=txtY+yInterval-4;
+        self.btnMonthly=QPushButton(self)
+        self.btnMonthly.setText('Monthly')
+        self.btnMonthly.setCheckable(True)
+        self.btnMonthly.move(txtX,txtY)
+        self.btnMonthly.resize(txtWidth,txtHeight)
+
+        txtY=txtY+yInterval-4;
+        self.btnYearly=QPushButton(self)
+        self.btnYearly.setText('Yearly')
+        self.btnYearly.setCheckable(True)
+        self.btnYearly.move(txtX,txtY)
+        self.btnYearly.resize(txtWidth,txtHeight)
+class UnitFrequency(QWidget):
+    def __init__(self):
+        super().__init__()
+        self.initUI()
+    def initUI(self):
+        pass
+
 if __name__=='__main__':
     app=QApplication(sys.argv)
     ex=DateMenu()

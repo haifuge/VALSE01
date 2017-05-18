@@ -26,6 +26,9 @@
       <SubType>Code</SubType>
     </Compile>
     <Compile Include="DBOperation.py" />
+    <Compile Include="module1.py">
+      <SubType>Code</SubType>
+    </Compile>
     <Compile Include="TimeLine.py" />
     <Compile Include="Timer.py" />
     <Compile Include="Windows.py">
