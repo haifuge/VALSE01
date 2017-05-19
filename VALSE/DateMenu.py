@@ -6,7 +6,7 @@ from PyQt5.QtGui import *
 class DateMenu(QWidget):
     startDate=''
     endDate=''
-    frequency=''
+    frequency=[]
     location=''
     """description of class"""
     def __init__(self):
@@ -84,6 +84,7 @@ class DateMenu(QWidget):
         self.btnCustom.move(txtX,txtY)
         self.btnCustom.resize(txtWidth,txtHeight)
 
+        # location
         txtY=txtY+yInterval+5;
         lblLocation=QLabel(self)
         lblLocation.setText('Location:')
@@ -91,8 +92,10 @@ class DateMenu(QWidget):
         lblLocation.move(20,txtY)
         self.btnLocation=QComboBox(self)
         self.btnLocation.addItems(['Location1','Location2','Location3'])
+        self.location='Location1'
         self.btnLocation.move(txtX,txtY)
         self.btnLocation.resize(txtWidth,txtHeight)
+        self.btnLocation.currentTextChanged.connect(self.setLocation)
 
         txtY=txtY+yInterval+5;
         self.btnCancel=QPushButton(self)
@@ -112,19 +115,22 @@ class DateMenu(QWidget):
         self.ds=DateSelector(self)
         self.ds.signal[str].connect(self.setbtnText)
         self.ds.setWindowFlags(Qt.FramelessWindowHint)
-        #self.dialog=self.ds
+        
         # btn frequency click
         self.btnWeekly.clicked.connect(self.frequencyClicked)
         self.btnMonthly.clicked.connect(self.frequencyClicked)
         self.btnYearly.clicked.connect(self.frequencyClicked)
         self.btnCustom.clicked.connect(self.frequencyClicked)
 
+    def setLocation(self):
+        self.location=self.btnLocation.currentText()
     def btnDecClicked(self):
         s=self.sender()
         if s==self.btnCancel:
             self.close()
         if s==self.btnConfirm:
-            self.close()
+            #self.close()
+            print(self.startDate, self.endDate, self.frequency, self.location, sep=', ')
 
     def frequencyClicked(self):
         self.freqSender=self.sender();
@@ -137,14 +143,17 @@ class DateMenu(QWidget):
         if self.freqSender!=self.btnCustom:
             self.btnCustom.setChecked(False)
         if self.freqSender==self.btnCustom:
-            self.cp=CustomPanel(self)
+            self.btnCustom.setChecked(True)
+            self.cp=CustomFrequencyPanel(self)
             self.cp.setWindowFlags(Qt.FramelessWindowHint)
             point=self.btnCustom.rect().topRight()
             global_point=self.btnCustom.mapToGlobal(point)
             self.cp.setPosition(global_point.x(),global_point.y())
+            self.cp.signal.connect(self.emitFrequency)
             self.cp.exec_()
         frequency=self.freqSender.text()
-        
+    def emitFrequency(self, arr):
+        self.frequency=arr
     def btnDateClicked(self):
         self.btnSender=self.sender()
         point=self.btnSender.rect().topRight()
@@ -153,6 +162,10 @@ class DateMenu(QWidget):
         self.ds.exec_()
     def setbtnText(self, s):
         self.btnSender.setText(s)
+        if self.btnSender==self.btnDateStart:
+            self.startDate=s
+        if self.btnSender==self.btnDateEnd:
+            self.endDate=s
 
 class DateSelector(QDialog):
     signal=pyqtSignal(str)
@@ -173,8 +186,8 @@ class DateSelector(QDialog):
     def setPosition(self, x,y):
         self.move(x,y)
 
-class CustomPanel(QDialog):
-    signal=pyqtSignal(str)
+class CustomFrequencyPanel(QDialog):
+    signal=pyqtSignal(list)
     def __init__(self, parent=None):
         super().__init__()
         self.initUI()
@@ -207,7 +220,10 @@ class CustomPanel(QDialog):
             self.close()
         if s==self.btnConfirm:
             self.close()
-            print(self.ws.weeks)
+            frequency=[]
+            frequency.append(self.ws.weeks)
+            frequency.append(self.ws.getTimes())
+            self.signal.emit(frequency)
 
 
 class FrequencySelectionBtns(QWidget):
@@ -267,7 +283,6 @@ class WeeklySelectionPanel(QWidget):
         self.initUI()
     def initUI(self):
         btnsTxt=['S','M','T','W','T','F','S']
-        
         lblevery=QLabel(self)
         lblevery.setText('Every')
         lblevery.move(10,5)
@@ -275,6 +290,7 @@ class WeeklySelectionPanel(QWidget):
         self.txtTimes=QTextEdit(self)
         self.txtTimes.move(45,1)
         self.txtTimes.resize(QSize(35,28))
+        self.txtTimes.setText('1')
         lblUnit=QLabel(self)
         lblUnit.setText('week(s) on:')
         lblUnit.move(85,5)
@@ -304,12 +320,12 @@ class WeeklySelectionPanel(QWidget):
         
     def weekClicked(self, n):
         s=self.sender()
-        print(n)
         if s.isChecked():
             self.weeks[n]=1
         else:
             self.weeks[n]=0
-
+    def getTimes(self):
+        return self.txtTimes.toPlainText()
 
 
 class UnitFrequency(QWidget):
