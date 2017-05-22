@@ -187,31 +187,50 @@ class DateSelector(QDialog):
         self.move(x,y)
 
 class CustomFrequencyPanel(QDialog):
+    # weekly height
+    weeklyHeight=270
+    monthlyHeight=470
+    yearlyHeight=270
     signal=pyqtSignal(list)
     def __init__(self, parent=None):
         super().__init__()
         self.initUI()
     def initUI(self):
-        vlayout=QVBoxLayout(self)
+        self.vlayout=QVBoxLayout(self)
         self.cf=FrequencySelectionBtns()
-        vlayout.addWidget(self.cf)
+        self.cf.daysSelection[str].connect(self.daysSelected)
+        self.vlayout.addWidget(self.cf)
         self.ws=WeeklySelectionPanel()
-        vlayout.addWidget(self.ws)
-        hlayout=QHBoxLayout()
+        self.vlayout.addWidget(self.ws)
+        self.resize(QSize(250,self.weeklyHeight))
+        self.hlayout=QHBoxLayout()
         self.btnCancel=QPushButton(self)
         self.btnCancel.setText('Cancel')
         self.btnCancel.resize(QSize(60,27))
         self.btnCancel.clicked.connect(self.btnClicked)
-        hlayout.addWidget(self.btnCancel)
-        hlayout.addStretch(1)
+        self.hlayout.addWidget(self.btnCancel)
+        self.hlayout.addStretch(1)
         self.btnConfirm=QPushButton(self)
         self.btnConfirm.setText('Confirm')
         self.btnConfirm.resize(QSize(60,27))
         self.btnConfirm.clicked.connect(self.btnClicked)
-        hlayout.addWidget(self.btnConfirm)
-        vlayout.addLayout(hlayout)
-        self.setLayout(vlayout)
-        self.resize(QSize(250,300))
+        self.hlayout.addWidget(self.btnConfirm)
+        self.vlayout.addLayout(self.hlayout)
+        self.setLayout(self.vlayout)
+        
+    def daysSelected(self, days):
+        self.vlayout.removeWidget(self.ws)
+        if days=='weekly':
+            self.ws=WeeklySelectionPanel()
+            self.resize(QSize(250,self.weeklyHeight))
+        if days=='monthly':
+            self.ws=MonthlySelectionPanel()
+            self.resize(QSize(250,self.monthlyHeight))
+        if days=='yearly':
+            self.ws=YearlySelectionPanel()
+            self.resize(QSize(250,self.yearlyHeight))
+        self.vlayout.insertWidget(1,self.ws)
+
     def setPosition(self, x,y):
         self.move(x,y)
     def btnClicked(self):
@@ -221,12 +240,12 @@ class CustomFrequencyPanel(QDialog):
         if s==self.btnConfirm:
             self.close()
             frequency=[]
-            frequency.append(self.ws.weeks)
+            frequency.append(self.ws.customDays)
             frequency.append(self.ws.getTimes())
             self.signal.emit(frequency)
 
-
 class FrequencySelectionBtns(QWidget):
+    daysSelection=pyqtSignal(str)
     def __init__(self):
         super().__init__()
         self.initUI()
@@ -248,6 +267,7 @@ class FrequencySelectionBtns(QWidget):
         self.btnWeekly.setCheckable(True)
         self.btnWeekly.move(txtX,txtY)
         self.btnWeekly.resize(txtWidth,txtHeight)
+        self.btnWeekly.setChecked(True)
 
         txtY=txtY+yInterval-4;
         self.btnMonthly=QPushButton(self)
@@ -269,15 +289,24 @@ class FrequencySelectionBtns(QWidget):
 
     def frequencyClicked(self):
         self.freqSender=self.sender();
-        if self.freqSender!=self.btnWeekly:
-            self.btnWeekly.setChecked(False)
-        if self.freqSender!=self.btnMonthly:
+        if self.freqSender==self.btnWeekly:
+            self.btnWeekly.setChecked(True)
             self.btnMonthly.setChecked(False)
-        if self.freqSender!=self.btnYearly:
             self.btnYearly.setChecked(False)
+            self.daysSelection.emit('weekly')
+        if self.freqSender!=self.btnMonthly:
+            self.btnWeekly.setChecked(False)
+            self.btnMonthly.setChecked(True)
+            self.btnYearly.setChecked(False)
+            self.daysSelection.emit('monthly')
+        if self.freqSender!=self.btnYearly:
+            self.btnWeekly.setChecked(False)
+            self.btnMonthly.setChecked(False)
+            self.btnYearly.setChecked(True)
+            self.daysSelection.emit('yearly')
 
 class WeeklySelectionPanel(QWidget):
-    weeks=[0,0,0,0,0,0,0]
+    customDays=[0,0,0,0,0,0,0]
     def __init__(self):
         super().__init__()
         self.initUI()
@@ -321,12 +350,116 @@ class WeeklySelectionPanel(QWidget):
     def weekClicked(self, n):
         s=self.sender()
         if s.isChecked():
-            self.weeks[n]=1
+            self.customDays[n]=1
         else:
-            self.weeks[n]=0
+            self.customDays[n]=0
     def getTimes(self):
         return self.txtTimes.toPlainText()
 
+class MonthlySelectionPanel(QWidget):
+    customDays=[0,0,0,0,0,
+                0,0,0,0,0,
+                0,0,0,0,0,
+                0,0,0,0,0,
+                0,0,0,0,0,
+                0,0,0,0,0,0]
+    def __init__(self):
+        super().__init__()
+        self.initUI()
+    def initUI(self):
+        lblevery=QLabel(self)
+        lblevery.setText('Every')
+        lblevery.move(10,5)
+        lblevery.adjustSize()
+        self.txtTimes=QTextEdit(self)
+        self.txtTimes.move(45,1)
+        self.txtTimes.resize(QSize(35,28))
+        self.txtTimes.setText('1')
+        lblUnit=QLabel(self)
+        lblUnit.setText('month(s) on:')
+        lblUnit.move(85,5)
+        lblUnit.adjustSize()
+        a=25
+        for i in range(len(self.customDays)):
+            btn=QPushButton(self)
+            btn.setText(str(i+1))
+            btn.setCheckable(True)
+            btn.resize(QSize(a,a))
+            btn.move(25+(i%7)*27, 40+27*(i//7))
+            btn.clicked.connect(self.btnClicked)
+        
+    def btnClicked(self, n):
+        s=self.sender()
+        if s.isChecked():
+            self.customDays[n]=s.text()
+        else:
+            self.customDays[n]=0
+    def getTimes(self):
+        return self.txtTimes.toPlainText()
+
+class YearlySelectionPanel(QWidget):
+    customDays=[0,0,0,0,0,0,
+                0,0,0,0,0,0]
+    def __init__(self):
+        super().__init__()
+        self.initUI()
+    def initUI(self):
+        btnsTxt=['JAN','FEB','MAR','APR','MAY','JUN',
+                 'JUL','AUG','SEP','OCT','NOV','DEC']
+        lblevery=QLabel(self)
+        lblevery.setText('Every')
+        lblevery.move(10,5)
+        lblevery.adjustSize()
+        self.txtTimes=QTextEdit(self)
+        self.txtTimes.move(45,1)
+        self.txtTimes.resize(QSize(35,28))
+        self.txtTimes.setText('1')
+        lblUnit=QLabel(self)
+        lblUnit.setText('week(s) on:')
+        lblUnit.move(85,5)
+        lblUnit.adjustSize()
+        a=40
+        btns=[]
+        self.btnJan=QPushButton(self)
+        self.btnJan.clicked.connect(lambda: self.weekClicked(0))
+        self.btnFeb=QPushButton(self)
+        self.btnFeb.clicked.connect(lambda: self.weekClicked(1))
+        self.btnMar=QPushButton(self)
+        self.btnMar.clicked.connect(lambda: self.weekClicked(2))
+        self.btnApr=QPushButton(self)
+        self.btnApr.clicked.connect(lambda: self.weekClicked(3))
+        self.btnMay=QPushButton(self)
+        self.btnMay.clicked.connect(lambda: self.weekClicked(4))
+        self.btnJun=QPushButton(self)
+        self.btnJun.clicked.connect(lambda: self.weekClicked(5))
+        self.btnJul=QPushButton(self)
+        self.btnJul.clicked.connect(lambda: self.weekClicked(6))
+        self.btnAug=QPushButton(self)
+        self.btnAug.clicked.connect(lambda: self.weekClicked(7))
+        self.btnSep=QPushButton(self)
+        self.btnSep.clicked.connect(lambda: self.weekClicked(8))
+        self.btnOct=QPushButton(self)
+        self.btnOct.clicked.connect(lambda: self.weekClicked(9))
+        self.btnNov=QPushButton(self)
+        self.btnNov.clicked.connect(lambda: self.weekClicked(10))
+        self.btnDec=QPushButton(self)
+        self.btnDec.clicked.connect(lambda: self.weekClicked(11))
+        btns=[self.btnJan, self.btnFeb, self.btnMar, self.btnApr, self.btnMay, self.btnJun,
+              self.btnJul, self.btnAug, self.btnSep, self.btnOct, self.btnNov, self.btnDec]
+        for i in range(len(btns)):
+            btns[i].setText(btnsTxt[i])
+            btns[i].setCheckable(True)
+            btns[i].resize(QSize(a,a))
+            btns[i].move(25+(i%4)*42, 40+42*(i//4))
+        
+    def weekClicked(self, n):
+        s=self.sender()
+        if s.isChecked():
+            self.customDays[n]=1
+        else:
+            self.customDays[n]=0
+    def getTimes(self):
+        return self.txtTimes.toPlainText()
 
 class UnitFrequency(QWidget):
     def __init__(self):
