@@ -134,15 +134,25 @@ class DateMenu(QWidget):
 
     def frequencyClicked(self):
         self.freqSender=self.sender();
-        if self.freqSender!=self.btnWeekly:
-            self.btnWeekly.setChecked(False)
-        if self.freqSender!=self.btnMonthly:
+        if self.freqSender==self.btnWeekly:
+            self.btnWeekly.setChecked(True)
             self.btnMonthly.setChecked(False)
-        if self.freqSender!=self.btnYearly:
             self.btnYearly.setChecked(False)
-        if self.freqSender!=self.btnCustom:
-            self.btnCustom.setChecked(False)
+            self.frequency=[1,1,1,1,1,1,1]
+        if self.freqSender==self.btnMonthly:
+            self.btnWeekly.setChecked(False)
+            self.btnMonthly.setChecked(True)
+            self.btnYearly.setChecked(False)
+            self.frequency=[1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1]
+        if self.freqSender==self.btnYearly:
+            self.btnWeekly.setChecked(False)
+            self.btnMonthly.setChecked(False)
+            self.btnYearly.setChecked(True)
+            self.frequency=[1,1,1,1,1,1,1,1,1,1,1,1]
         if self.freqSender==self.btnCustom:
+            self.btnWeekly.setChecked(False)
+            self.btnMonthly.setChecked(False)
+            self.btnYearly.setChecked(False)
             self.btnCustom.setChecked(True)
             self.cp=CustomFrequencyPanel(self)
             self.cp.setWindowFlags(Qt.FramelessWindowHint)
@@ -151,7 +161,7 @@ class DateMenu(QWidget):
             self.cp.setPosition(global_point.x(),global_point.y())
             self.cp.signal.connect(self.emitFrequency)
             self.cp.exec_()
-        frequency=self.freqSender.text()
+        #frequency=self.freqSender.text()
     def emitFrequency(self, arr):
         self.frequency=arr
     def btnDateClicked(self):
@@ -188,29 +198,34 @@ class DateSelector(QDialog):
 
 class CustomFrequencyPanel(QDialog):
     # weekly height
-    weeklyHeight=270
-    monthlyHeight=470
-    yearlyHeight=270
+    weeklyHeight=230
+    monthlyHeight=380
+    yearlyHeight=350
     signal=pyqtSignal(list)
     def __init__(self, parent=None):
         super().__init__()
         self.initUI()
     def initUI(self):
-        self.vlayout=QVBoxLayout(self)
+        self.vlayout=QVBoxLayout()
+        self.h1layout=QHBoxLayout()
         self.cf=FrequencySelectionBtns()
+        self.cf.resize(QSize(250,160))
         self.cf.daysSelection[str].connect(self.daysSelected)
-        self.vlayout.addWidget(self.cf)
+        self.h1layout.addWidget(self.cf)
+        self.h1layout.setSizeConstraint(QLayout.SetFixedSize)
+        self.vlayout.addLayout(self.h1layout)
+
         self.ws=WeeklySelectionPanel()
         self.vlayout.addWidget(self.ws)
-        self.resize(QSize(250,self.weeklyHeight))
+        self.vlayout.addStretch(1)
         self.hlayout=QHBoxLayout()
-        self.btnCancel=QPushButton(self)
+        self.btnCancel=QPushButton()
         self.btnCancel.setText('Cancel')
         self.btnCancel.resize(QSize(60,27))
         self.btnCancel.clicked.connect(self.btnClicked)
         self.hlayout.addWidget(self.btnCancel)
         self.hlayout.addStretch(1)
-        self.btnConfirm=QPushButton(self)
+        self.btnConfirm=QPushButton()
         self.btnConfirm.setText('Confirm')
         self.btnConfirm.resize(QSize(60,27))
         self.btnConfirm.clicked.connect(self.btnClicked)
@@ -220,16 +235,16 @@ class CustomFrequencyPanel(QDialog):
         
     def daysSelected(self, days):
         self.vlayout.removeWidget(self.ws)
+        self.ws.deleteLater()
+        self.ws=None
         if days=='weekly':
             self.ws=WeeklySelectionPanel()
-            self.resize(QSize(250,self.weeklyHeight))
         if days=='monthly':
             self.ws=MonthlySelectionPanel()
-            self.resize(QSize(250,self.monthlyHeight))
         if days=='yearly':
             self.ws=YearlySelectionPanel()
-            self.resize(QSize(250,self.yearlyHeight))
         self.vlayout.insertWidget(1,self.ws)
+        self.resize(QSize(220,200))
 
     def setPosition(self, x,y):
         self.move(x,y)
@@ -250,9 +265,10 @@ class FrequencySelectionBtns(QWidget):
         super().__init__()
         self.initUI()
     def initUI(self):
-        self.resize(200,200)
+        self.setMinimumSize(QSize(220,100))
+        self.setMaximumSize(QSize(220,100))
         txtX=85
-        txtY=20
+        txtY=15
          # textEdit size
         txtWidth=120
         txtHeight=27
@@ -294,23 +310,26 @@ class FrequencySelectionBtns(QWidget):
             self.btnMonthly.setChecked(False)
             self.btnYearly.setChecked(False)
             self.daysSelection.emit('weekly')
-        if self.freqSender!=self.btnMonthly:
+        if self.freqSender==self.btnMonthly:
             self.btnWeekly.setChecked(False)
             self.btnMonthly.setChecked(True)
             self.btnYearly.setChecked(False)
             self.daysSelection.emit('monthly')
-        if self.freqSender!=self.btnYearly:
+        if self.freqSender==self.btnYearly:
             self.btnWeekly.setChecked(False)
             self.btnMonthly.setChecked(False)
             self.btnYearly.setChecked(True)
             self.daysSelection.emit('yearly')
 
+# custom panel, buttons of 7-day panel
 class WeeklySelectionPanel(QWidget):
     customDays=[0,0,0,0,0,0,0]
     def __init__(self):
         super().__init__()
         self.initUI()
     def initUI(self):
+        self.setMinimumSize(220,80)
+        self.setMaximumSize(220,80)
         btnsTxt=['S','M','T','W','T','F','S']
         lblevery=QLabel(self)
         lblevery.setText('Every')
@@ -356,6 +375,7 @@ class WeeklySelectionPanel(QWidget):
     def getTimes(self):
         return self.txtTimes.toPlainText()
 
+# custom panel, buttons of 31-day panel
 class MonthlySelectionPanel(QWidget):
     customDays=[0,0,0,0,0,
                 0,0,0,0,0,
@@ -367,6 +387,8 @@ class MonthlySelectionPanel(QWidget):
         super().__init__()
         self.initUI()
     def initUI(self):
+        self.setMinimumSize(220,180)
+        self.setMaximumSize(220,180)
         lblevery=QLabel(self)
         lblevery.setText('Every')
         lblevery.move(10,5)
@@ -388,15 +410,16 @@ class MonthlySelectionPanel(QWidget):
             btn.move(25+(i%7)*27, 40+27*(i//7))
             btn.clicked.connect(self.btnClicked)
         
-    def btnClicked(self, n):
+    def btnClicked(self):
         s=self.sender()
         if s.isChecked():
-            self.customDays[n]=s.text()
+            self.customDays[int(s.text())]=1
         else:
-            self.customDays[n]=0
+            self.customDays[int(s.text())]=0
     def getTimes(self):
         return self.txtTimes.toPlainText()
 
+#custom panel, buttons of 12-month 
 class YearlySelectionPanel(QWidget):
     customDays=[0,0,0,0,0,0,
                 0,0,0,0,0,0]
@@ -404,8 +427,8 @@ class YearlySelectionPanel(QWidget):
         super().__init__()
         self.initUI()
     def initUI(self):
-        btnsTxt=['JAN','FEB','MAR','APR','MAY','JUN',
-                 'JUL','AUG','SEP','OCT','NOV','DEC']
+        self.setMinimumSize(220,170)
+        self.setMaximumSize(220,170)
         lblevery=QLabel(self)
         lblevery.setText('Every')
         lblevery.move(10,5)
@@ -415,9 +438,11 @@ class YearlySelectionPanel(QWidget):
         self.txtTimes.resize(QSize(35,28))
         self.txtTimes.setText('1')
         lblUnit=QLabel(self)
-        lblUnit.setText('week(s) on:')
+        lblUnit.setText('year(s) on:')
         lblUnit.move(85,5)
         lblUnit.adjustSize()
+        btnsTxt=['JAN','FEB','MAR','APR','MAY','JUN',
+                 'JUL','AUG','SEP','OCT','NOV','DEC']
         a=40
         btns=[]
         self.btnJan=QPushButton(self)
@@ -451,7 +476,7 @@ class YearlySelectionPanel(QWidget):
             btns[i].setCheckable(True)
             btns[i].resize(QSize(a,a))
             btns[i].move(25+(i%4)*42, 40+42*(i//4))
-        
+
     def weekClicked(self, n):
         s=self.sender()
         if s.isChecked():
@@ -471,6 +496,7 @@ class UnitFrequency(QWidget):
 if __name__=='__main__':
     app=QApplication(sys.argv)
     ex=DateMenu()
+    #ex=YearlySelectionPanel()
     ex.show();
     sys.exit(app.exec_())
 
