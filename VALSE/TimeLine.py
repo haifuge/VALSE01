@@ -10,6 +10,7 @@ class TimeLine(QWidget):
         self.initUI()
     def initUI(self):
         self.setMinimumSize(500,270)
+        self.setFixedSize(500,270)
         self.tab=QTabWidget(self)
         self.tab.move(0,0)
         self.tab.size().width=self.size().width()
@@ -266,20 +267,19 @@ class EventGrid(QWidget):
         cHeight=self.rowHeight
         height=self.eventNum*self.rowHeight
         # grid left blank margin
-        cWidth=int(width*0.07)
-        # gird right blank margin
-        grWidth=int(width*0.97)
+        cWidth=30
+        # gird right position
+        grWidth=int(width-15)
         qp.setPen(QPen(Qt.black, 1, Qt.SolidLine))
         
-
         # draw horizontal lines
         for i in range(self.eventNum):
             qp.drawLine(0, i*cHeight, width, i*cHeight)
         qp.drawLine(0, self.eventNum * cHeight-1, width, self.eventNum * cHeight-1)
-        gridstep = width * 0.1
+        gridstep = (width-45) * 0.1
         # draw vertical lines
         qp.setPen(QColor(210,210,222))
-        for i in range(10):
+        for i in range(11):
             qp.drawLine(cWidth+i*gridstep, 0, cWidth+i*gridstep, self.eventNum * cHeight)
         # draw middle horizontal lines
         for i in range(self.eventNum):
@@ -319,11 +319,11 @@ class GridArea(QWidget):
         vlayout.addWidget(scroll)
         self.setLayout(vlayout)
 
-        self.leftbtn=DragButton("", self)
+        self.leftbtn=DragButton("|", self)
         self.leftbtn.resize(10, 30)
         self.leftbtn.setXrange(0, self.size().width())
 
-        self.rightbtn=DragButton("", self)
+        self.rightbtn=DragButton("|", self)
         self.rightbtn.resize(10, 30)
         self.rightbtn.setXrange(0, self.size().width())
         
