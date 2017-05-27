@@ -2,13 +2,14 @@ import sys
 from PyQt5.QtCore import *
 from PyQt5.QtGui import *
 from PyQt5.QtWidgets import *
-import TimeLine
+import TimeLine, DateMenu
 
 class MainWindow(QMainWindow):
     count=0
     def __init__(self, parent=None):
         super().__init__(parent)
         self.setWindowTitle('VALSE')
+        self.resize(1200, 700)
         self.mdi=QMdiArea()
         self.setCentralWidget(self.mdi)
         bar=self.menuBar()
@@ -17,8 +18,12 @@ class MainWindow(QMainWindow):
         file.addAction("Cascade")
         file.addAction("Tiled")
         file.triggered[QAction].connect(self.windowAction)
+
+        datePanel=bar.addMenu("Date Panel")
+        datePanel.addAction("Show Date Panel")
+        datePanel.triggered[QAction].connect(self.windowAction)
+
     def windowAction(self, q):
-        print("triggered")
         if q.text()=="New":
             self.count=self.count+1
             sub=QMdiSubWindow()
@@ -30,6 +35,12 @@ class MainWindow(QMainWindow):
             self.mdi.cascadeSubWindows()
         if q.text()=='Titled':
             self.mdi.tileSubWindows()
+        if q.text()=='Show Date Panel':
+            dateMenu=QMdiSubWindow()
+            dateMenu.setWidget(DateMenu.DateMenu())
+            dateMenu.setWindowTitle("Datetiem Selection")
+            self.mdi.addSubWindow(dateMenu)
+            dateMenu.show()
 
 if __name__=='__main__':
     app=QApplication(sys.argv)

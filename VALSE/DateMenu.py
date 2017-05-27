@@ -13,7 +13,8 @@ class DateMenu(QWidget):
         super().__init__()
         self.initUI()
     def initUI(self):
-        self.setGeometry(300,300,240,300)
+        self.setGeometry(300,300,250,300)
+        self.setMinimumSize(250, 300)
         # textEdit position
         txtY=15;
         txtX=90;
