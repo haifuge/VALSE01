@@ -186,7 +186,7 @@ class DateSelector(QDialog):
     def initUI(self):
         self.cal=QCalendarWidget(self)
         self.cal.setGridVisible(True)
-        self.cal.setGeometry(0,0,370,250)
+        self.cal.setGeometry(0,0,390,250)
         self.cal.clicked[QDate].connect(self.emitDate)
         self.lbl=QLabel(self)
         self.resize(self.cal.size())

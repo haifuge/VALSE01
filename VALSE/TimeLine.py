@@ -10,7 +10,7 @@ class TimeLine(QWidget):
         self.initUI()
     def initUI(self):
         self.setMinimumSize(500,270)
-        self.setFixedSize(500,270)
+        #self.setFixedSize(500,270)
         self.tab=QTabWidget(self)
         self.tab.move(0,0)
         self.tab.size().width=self.size().width()
@@ -72,16 +72,18 @@ class VerifiedTab(QWidget):
 
         self.timeline=Tileline()
         self.timeline.setGeometry(0, 0, self.size().width(), 20)
+        self.timeline.timeRangeChanged.connect(self.timeRangeChanging)
         self.vlb.addWidget(self.timeline)
 
         self.setLayout(self.vlb)
 
     def paintEvent(self, e):
-        qp=QPainter()
-        qp.setPen(Qt.red)
-        qp.begin(self)
-        # qp.drawRect(QRect(e.rect()))
-        qp.end()
+        pass
+        #qp=QPainter()
+        #qp.setPen(Qt.red)
+        #qp.begin(self)
+        #qp.drawRect(QRect(e.rect()))
+        #qp.end()
     def timerTick(self):
         pass
     def playbtnClicked(self):
@@ -103,10 +105,21 @@ class VerifiedTab(QWidget):
     def timerSlowDown(self):
         self.speedTimes = self.speedTimes * 2
         self.speed=self.originalSpeed*self.speedTimes
+    def timeRangeChanging(self):
+        value=self.timeline.getTimePeriodRange()
+        self.startTime=value[0]
+        self.endTime=value[1]
+        self.grid.setTimeRange(self.startTime, self.endTime)
 
+# the bottom timeline
 class Tileline(QWidget):
-    start_x=0
-    end_x=100
+    timeRangeChanged=pyqtSignal()
+    # one unit of timeline
+    timelineStep=0
+    # timeline start time, seconds
+    startTime=0
+    # timelien end time, seconds
+    endTime=24*3600
     def __init__(self):
         super().__init__()
         self.initUI()
@@ -116,23 +129,15 @@ class Tileline(QWidget):
         self.initialPosition=True
         self.setContentsMargins(QMargins(0,0,0,0))
         self.setMinimumSize(350, 50)
-        self.beginTime=time.localtime()
-        self.endTime=time.localtime()
 
-        self.start_x = 0
-        self.end_x = self.size().width()-155
         self.btn_y = 3
         self.leftbtn = DragButton("|", self)
         self.leftbtn.resize(10, 20)
-        self.leftbtn.move(self.start_x, self.btn_y)
         self.leftbtn.setYpos(self.btn_y)
-        self.leftbtn.setXrange(self.start_x, self.size().width() - self.start_x)
 
         self.rightbtn = DragButton("|", self)
         self.rightbtn.resize(10, 20)
-        self.rightbtn.move(self.end_x, self.btn_y)
         self.rightbtn.setYpos(self.btn_y)
-        self.rightbtn.setXrange(self.start_x, self.size().width() - self.rightbtn.size().width())
 
         self.leftbtn.setRightBtn(self.rightbtn)
         self.rightbtn.setLeftBtn(self.leftbtn)
@@ -148,8 +153,6 @@ class Tileline(QWidget):
             self.initialPosition=False
             self.leftbtnXPosRatio = self.leftbtn.x() / self.size().width()
             self.rightbtnXPosRatio = self.rightbtn.x() / self.size().width()
-            self.leftbtn.setXrange(self.start_x, self.rightbtn.x())
-            self.rightbtn.setXrange(self.leftbtn.x()+self.leftbtn.size().width(), self.rightbtn.x())
         else:
             self.rightbtn.move(self.rightbtnXPosRatio*self.size().width(), self.btn_y)
             self.leftbtn.move(self.leftbtnXPosRatio*self.size().width(), self.btn_y)
@@ -158,12 +161,43 @@ class Tileline(QWidget):
 
     def leftbtnRelease(self):
         self.leftbtnXPosRatio=self.leftbtn.x()/self.size().width()
+            
     def rightbtnRelease(self):
         self.rightbtnXPosRatio=self.rightbtn.x()/self.size().width()
+        
+
     def leftbtnMove(self):
+        leftbtnPos=self.leftbtn.x()+self.leftbtn.size().width();
+        if leftbtnPos<self.timelineStep:
+            self.startTime=0.0
+        else:
+            x=(leftbtnPos-self.timelineStep)/self.timelineStep
+            # change time to seconds
+            self.startTime=int(x*3600)
+        # inform grid that time range is changed
+        self.timeRangeChanged.emit()
+        point=self.leftbtn.rect().topRight()
+        global_point=self.leftbtn.mapToGlobal(point)
+        QToolTip.showText(QPoint(global_point), Second2Time(self.startTime))
+        self.leftbtn.setToolTip(Second2Time(self.startTime))
+        
         self.repaint()
     def rightbtnMove(self):
+        if self.rightbtn.x()>self.timelineStep*25:
+            self.endTime=24.0*3600
+        else:
+            x=(self.rightbtn.x()-self.timelineStep)/self.timelineStep
+            # change time to seconds
+            self.endTime=int(x*3600)
+        self.timeRangeChanged.emit()
+        point=self.rightbtn.rect().topRight()
+        global_point=self.rightbtn.mapToGlobal(point)
+        QToolTip.showText(QPoint(global_point), Second2Time(self.endTime))
+        self.rightbtn.setToolTip(Second2Time(self.endTime))
+        
         self.repaint()
+    def getTimePeriodRange(self):
+        return (self.startTime, self.endTime)
 
     def paintEvent(self, e):
         qp=QPainter()
@@ -181,28 +215,26 @@ class Tileline(QWidget):
         qp.drawRect(self.rightbtn.x(),0,self.size().width()-self.rightbtn.x(), self.size().height()/2)
 
     def drawTimeline(self, qp):
-        borderPen=QPen(QColor(255,255,255), 2, Qt.SolidLine)
+        #borderPen=QPen(QColor(255,255,255), 2, Qt.SolidLine)
         width=self.size().width()
         height=self.size().height()
         # draw timeline
         timeline_y=self.size().height()/2
         qp.drawLine(0, timeline_y, width, timeline_y)
-        timelineStep=width/26
+        self.timelineStep=width/26
         timelineNumbers=['00:00','04:00','08:00','12:00','16:00','20:00','24:00']
-        self.start_x=timelineStep
-        self.end_x=width-self.start_x
-
+        self.start_x=self.timelineStep
         for i in range(0,25):
             j=i%4
             if(j==0):
                 qp.setFont(QFont('Lucida',7))
                 metrics = qp.fontMetrics()
                 fw = metrics.width(timelineNumbers[int(i/4)])
-                qp.drawText(timelineStep*i+self.start_x - fw / 2, timeline_y+20, timelineNumbers[int(i/4)])
-                qp.drawLine(timelineStep * (i) + self.start_x, timeline_y, timelineStep * (i) + self.start_x,
+                qp.drawText(self.timelineStep*i+self.start_x - fw / 2, timeline_y+20, timelineNumbers[int(i/4)])
+                qp.drawLine(self.timelineStep * (i) + self.start_x, timeline_y, self.timelineStep * (i) + self.start_x,
                             timeline_y + 7)
             else:
-                qp.drawLine(timelineStep * (i) + self.start_x, timeline_y, timelineStep * (i) + self.start_x,
+                qp.drawLine(self.timelineStep * (i) + self.start_x, timeline_y, self.timelineStep * (i) + self.start_x,
                             timeline_y + 4)
 
     def drawMarks(self,qp):
@@ -242,15 +274,16 @@ class Tileline(QWidget):
         x2,y2=x-r*math.sqrt(3)/2,y+r/2
         x3,y3=x+r*math.sqrt(3)/2,y+r/2
         points=QPolygon([QPoint(x1,y1),QPoint(x2,y2),QPoint(x3,y3)])
-        qp.setPen(color,1,Qt.SolidLine)
 
 class EventGrid(QWidget):
+    cWidth=30
+    gridstep=0
     def __init__(self):
         super().__init__()
         self.initUI()
 
     def initUI(self):
-        self.eventNum=5
+        self.eventNum=4
         self.rowHeight=50
         self.rowWidth=self.size().width()
         self.setMinimumHeight(120)
@@ -267,7 +300,7 @@ class EventGrid(QWidget):
         cHeight=self.rowHeight
         height=self.eventNum*self.rowHeight
         # grid left blank margin
-        cWidth=30
+        
         # gird right position
         grWidth=int(width-15)
         qp.setPen(QPen(Qt.black, 1, Qt.SolidLine))
@@ -276,11 +309,12 @@ class EventGrid(QWidget):
         for i in range(self.eventNum):
             qp.drawLine(0, i*cHeight, width, i*cHeight)
         qp.drawLine(0, self.eventNum * cHeight-1, width, self.eventNum * cHeight-1)
-        gridstep = (width-45) * 0.1
+        # width of each column
+        self.gridstep = (width-45) * 0.1
         # draw vertical lines
         qp.setPen(QColor(210,210,222))
         for i in range(11):
-            qp.drawLine(cWidth+i*gridstep, 0, cWidth+i*gridstep, self.eventNum * cHeight)
+            qp.drawLine(self.cWidth+i*self.gridstep, 0, self.cWidth+i*self.gridstep, self.eventNum * cHeight)
         # draw middle horizontal lines
         for i in range(self.eventNum):
             qp.drawLine(0,(i+0.5)*cHeight, width, (i+0.5)*cHeight)
@@ -289,15 +323,30 @@ class EventGrid(QWidget):
         pen = QPen(QColor(122, 122, 32))
         qp.setPen(pen)
         qp.setBrush(brush)
-        qp.drawRect(cWidth, 0, self.leftXPos-cWidth, height)
+        qp.drawRect(self.cWidth, 0, self.leftXPos-self.cWidth, height)
         qp.drawRect(self.rightXPos,0,grWidth-self.rightXPos, height)
 
     def setLeftLineXPos(self, xPos):
         self.leftXPos=xPos
     def setRightLineXPos(self, xPos):
         self.rightXPos=xPos
+    def getcWidth(self):
+        return self.cWidth
+    def getgridstep(self):
+        return self.gridstep
 
 class GridArea(QWidget):
+    # grid time range
+    timeRangeMin=0
+    timeRangeMax=24*3600
+    timeRange=24*3600
+    # grid start time and end time
+    startTime=0
+    endTime=0
+    # grid left blank width
+    lbWidth=0
+    # grid column width
+    columndWidth=0
     # tag for initializing left and right button position
     initialPosition=True
     def __init__(self):
@@ -321,11 +370,9 @@ class GridArea(QWidget):
 
         self.leftbtn=DragButton("|", self)
         self.leftbtn.resize(10, 30)
-        self.leftbtn.setXrange(0, self.size().width())
 
         self.rightbtn=DragButton("|", self)
         self.rightbtn.resize(10, 30)
-        self.rightbtn.setXrange(0, self.size().width())
         
         self.leftbtn.setRightBtn(self.rightbtn)
         self.rightbtn.setLeftBtn(self.leftbtn)
@@ -339,8 +386,10 @@ class GridArea(QWidget):
         gridwidth=self.size().width()-25
         self.widget.setGeometry(0, 0, gridwidth, self.widget.eventNum * self.widget.rowHeight)
         # set leftbtn and rightbtn position and moving range
-        leftRange=gridwidth*0.07-self.leftbtn.size().width()+1
-        rightRange=gridwidth*0.97+1
+        self.lbWidth=self.widget.getcWidth()
+        leftRange=self.lbWidth-self.leftbtn.size().width()+2
+        self.columndWidth=self.widget.getgridstep()
+        rightRange=gridwidth*0.97
         yPos=self.size().height()/2-self.leftbtn.size().height()/2;
         self.leftbtn.setYpos(yPos)
         self.rightbtn.setYpos(yPos)
@@ -360,26 +409,80 @@ class GridArea(QWidget):
             else:
                 self.leftbtn.move(self.leftbtnXPosRatio*gridwidth, yPos)
                 self.rightbtn.move(self.rightbtnXPosRatio*gridwidth, yPos)
-        self.leftbtn.setXrange(leftRange, self.rightbtn.x()-self.leftbtn.size().width())
-        self.rightbtn.setXrange(self.leftbtn.x()+self.leftbtn.size().width(), rightRange)
-        self.widget.setLeftLineXPos(self.leftbtn.x())
+        self.leftbtn.setXrange(leftRange, self.rightbtn.x()-self.leftbtn.size().width()+0.5)
+        self.rightbtn.setXrange(self.leftbtn.x()+self.leftbtn.size().width()-0.5, rightRange)
         self.widget.setRightLineXPos(self.rightbtn.x())
-
         self.widget.setLeftLineXPos(self.leftbtn.x()+self.leftbtn.size().width()-2)
-        self.widget.setLeftLineXPos(self.leftbtn.x()+self.leftbtn.size().width()-2)
+        self.lbWidth=self.widget.getcWidth()
+        self.columndWidth=self.widget.getgridstep()
         
     def leftbtnRelease(self):
         self.leftbtnXPosRatio=self.leftbtn.x()/(self.size().width()-25)
+
     def rightbtnRelease(self):
         self.rightbtnXPosRatio=self.rightbtn.x()/(self.size().width()-25)
+        
     def leftbtnMove(self):
         self.widget.setLeftLineXPos(self.leftbtn.x()+self.leftbtn.size().width()-2)
+        # show time as btn moves
+        point=self.leftbtn.rect().topRight()
+        global_point=self.leftbtn.mapToGlobal(point)
+        self.columndWidth=self.widget.getgridstep()
+        leftbtnPos=self.leftbtn.x()+self.leftbtn.size().width()-2;
+        if leftbtnPos<self.lbWidth:
+            self.startTime=self.timeRangeMin
+        else:
+            x=(leftbtnPos-self.lbWidth)*self.timeRange/(10*self.columndWidth)
+            # change time to seconds
+            self.startTime=int(x)+self.timeRangeMin
+        QToolTip.showText(QPoint(global_point), Second2Time(self.startTime))
+        self.leftbtn.setToolTip(Second2Time(self.startTime))
+
         self.widget.repaint()
-        self.repaint()
+        
     def rightbtnMove(self):
-        self.widget.setRightLineXPos(self.rightbtn.x()-2)
+        self.widget.setRightLineXPos(self.rightbtn.x()+0.5)
+        # show time as btn moves
+        point=self.rightbtn.rect().topRight()
+        self.columndWidth=self.widget.getgridstep()
+        global_point=self.rightbtn.mapToGlobal(point)
+        rightbtnPos=self.rightbtn.x()+0.5
+        if rightbtnPos>(self.lbWidth+self.columndWidth*10):
+            self.endTime=self.timeRangeMax
+        else:
+            x=(rightbtnPos-self.lbWidth)*self.timeRange/(10*self.columndWidth)
+            # change time to seconds
+            self.endTime=int(x)
+        self.rightbtn.setToolTip(Second2Time(self.endTime))
+        QToolTip.showText(QPoint(global_point), Second2Time(self.endTime))
+        self.rightbtn.setToolTip(Second2Time(self.endTime))
+
         self.widget.repaint()
-        self.repaint()
+        
+    def setTimeRange(self, sTime, eTime):
+        self.timeRangeMin=sTime
+        self.timeRangeMax=eTime
+        self.timeRange=eTime-sTime
+
+        self.columndWidth=self.widget.getgridstep()
+        leftbtnPos=self.leftbtn.x()+self.leftbtn.size().width()-2;
+        if leftbtnPos<self.lbWidth:
+            self.startTime=self.timeRangeMin
+        else:
+            x=(leftbtnPos-self.lbWidth)*self.timeRange/(10*self.columndWidth)
+            # change time to seconds
+            self.startTime=int(x)+self.timeRangeMin
+
+        rightbtnPos=self.rightbtn.x()+0.5
+        if rightbtnPos>(self.lbWidth+self.columndWidth*10):
+            self.endTime=self.timeRangeMax
+        else:
+            x=(rightbtnPos-self.lbWidth)*self.timeRange/(10*self.columndWidth)
+            # change time to seconds
+            self.endTime=int(x)
+
+        self.leftbtn.setToolTip(Second2Time(self.startTime))
+        self.rightbtn.setToolTip(Second2Time(self.endTime))
 
 class Color(object):
     red = QColor(Qt.red)
@@ -485,31 +588,18 @@ class DragButton(QPushButton):
         super(DragButton, self).mouseReleaseEvent(event)
         self.mouseReleaseSignal.emit()
 
-class TestDragButton(QWidget):
-    def __init__(self):
-        super().__init__()
-        self.initUI()
-
-    def initUI(self):
-        palette=self.palette()
-        palette.setColor(self.backgroundRole(),QColor(125,222,31))
-        self.setPalette(palette)
-        self.btn=DragButton(self)
-        # self.btn.setBackgroundRole()
-        self.btn.resize(10,40)
-        self.btn.move(50,50)
-        self.btn.setYpos(50)
-        self.btn.setXrange(10, 200)
-
-        self.setGeometry(400,400,400,400)
-        self.show()
+def Second2Time(second):
+    hour=int(second/3600)
+    minute=int((second-hour*3600)/60)
+    sec=second%60
+    return str(hour)+':'+str(minute)+':'+str(int(sec))
 
 if __name__=='__main__':
     app=QApplication(sys.argv)
     ex=TimeLine()
     #ex=GridArea()
-    # ex=EventGrid()
+    #ex=EventGrid()
     # ex=TestDragButton()
-    # ex=Tileline()
+    #ex=Tileline()
     ex.show()
     sys.exit(app.exec_())

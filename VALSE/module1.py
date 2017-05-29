@@ -9,6 +9,7 @@ def window():
    w = QWidget()
    b = QPushButton(w)
    b.setText("Hello World!")
+   b.setToolTip('press me')
    b.move(50,50)
    b.clicked.connect(showdialog)
    w.setWindowTitle("PyQt Dialog demo")
