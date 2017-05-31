@@ -397,18 +397,18 @@ class GridArea(QWidget):
         if self.initialPosition:
             self.leftbtn.move(leftRange, yPos)
             self.rightbtn.move(rightRange-self.rightbtn.x(), yPos)
-            self.leftbtnXPosRatio = self.leftbtn.x() / gridwidth
-            self.rightbtnXPosRatio = self.rightbtn.x() / gridwidth
+            self.leftbtnXPosRatio = (self.leftbtn.x()+self.leftbtn.size().width()-self.lbWidth-2) / self.size().width()
+            self.rightbtnXPosRatio = self.rightbtn.x() / (self.size().width()-self.lbWidth)
             self.initialPosition=False
         else:
             if self.resizetimes==2:
                 self.leftbtn.move(leftRange,yPos)
                 self.rightbtn.move(rightRange, yPos)
-                self.leftbtnXPosRatio = self.leftbtn.x() / gridwidth
-                self.rightbtnXPosRatio = self.rightbtn.x() / gridwidth
+                self.leftbtnXPosRatio = (self.leftbtn.x()+self.leftbtn.size().width()-self.lbWidth-2) / self.size().width()
+                self.rightbtnXPosRatio = self.rightbtn.x() / (self.size().width()-self.lbWidth)
             else:
-                self.leftbtn.move(self.leftbtnXPosRatio*gridwidth, yPos)
-                self.rightbtn.move(self.rightbtnXPosRatio*gridwidth, yPos)
+                self.leftbtn.move(self.leftbtnXPosRatio*self.size().width()+self.lbWidth-self.leftbtn.size().width()+2, yPos)
+                self.rightbtn.move(self.rightbtnXPosRatio*(self.size().width()-self.lbWidth), yPos)
         self.leftbtn.setXrange(leftRange, self.rightbtn.x()-self.leftbtn.size().width()+0.5)
         self.rightbtn.setXrange(self.leftbtn.x()+self.leftbtn.size().width()-0.5, rightRange)
         self.widget.setRightLineXPos(self.rightbtn.x())
@@ -417,7 +417,7 @@ class GridArea(QWidget):
         self.columndWidth=self.widget.getgridstep()
         
     def leftbtnRelease(self):
-        self.leftbtnXPosRatio=self.leftbtn.x()/(self.size().width()-25)
+        self.leftbtnXPosRatio = (self.leftbtn.x()+self.leftbtn.size().width()-self.lbWidth) / self.size().width()
 
     def rightbtnRelease(self):
         self.rightbtnXPosRatio=self.rightbtn.x()/(self.size().width()-25)
