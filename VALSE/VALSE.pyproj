@@ -22,21 +22,54 @@
   </PropertyGroup>
   <ItemGroup>
     <Compile Include="DataEntity.py" />
-    <Compile Include="DateMenu.py">
+    <Compile Include="UI\DateMenu\CustomFrequencyPanel.py">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="UI\DateMenu\DateMenu.py">
       <SubType>Code</SubType>
     </Compile>
     <Compile Include="DBOperation.py" />
     <Compile Include="module1.py">
       <SubType>Code</SubType>
     </Compile>
-    <Compile Include="TimeLine.py" />
+    <Compile Include="UI\DateMenu\DateSelector.py">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="UI\DateMenu\FrequencySelectionBtns.py">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="UI\DateMenu\MonthlySelectionPanel.py">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="UI\DateMenu\WeeklySelectionPanel.py">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="UI\DateMenu\YearlySelectionPanel.py">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="UI\EventTimeline\DragButton.py">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="UI\EventTimeline\EventGrid.py">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="UI\EventTimeline\GridArea.py">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="UI\EventTimeline\Tileline.py">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="UI\EventTimeline\TimeLine.py" />
     <Compile Include="Timer.py" />
     <Compile Include="Windows.py">
       <SubType>Code</SubType>
     </Compile>
   </ItemGroup>
   <ItemGroup>
+    <Folder Include="UI\" />
     <Folder Include="Pictures\" />
+    <Folder Include="UI\EventTimeline\" />
+    <Folder Include="UI\DateMenu\" />
   </ItemGroup>
   <ItemGroup>
     <Content Include="Pictures\fforward.png" />

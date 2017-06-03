@@ -2,7 +2,8 @@ import sys
 from PyQt5.QtCore import *
 from PyQt5.QtGui import *
 from PyQt5.QtWidgets import *
-import TimeLine, DateMenu
+from UI.EventTimeline import TimeLine
+from UI.DateMenu import DateMenu
 
 class MainWindow(QMainWindow):
     count=0
