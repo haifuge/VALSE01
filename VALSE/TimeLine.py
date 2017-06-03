@@ -397,18 +397,19 @@ class GridArea(QWidget):
         if self.initialPosition:
             self.leftbtn.move(leftRange, yPos)
             self.rightbtn.move(rightRange-self.rightbtn.x(), yPos)
-            self.leftbtnXPosRatio = (self.leftbtn.x()+self.leftbtn.size().width()-self.lbWidth-2) / self.size().width()
-            self.rightbtnXPosRatio = self.rightbtn.x() / (self.size().width()-self.lbWidth)
+            # calculate range is from self.lbWidth to self.size().width()-25-15, 25 is width of scrollbar, 15 is right blank 
+            self.leftbtnXPosRatio = (self.leftbtn.x()+self.leftbtn.size().width()-self.lbWidth-2) / (gridwidth-self.lbWidth-15)
+            self.rightbtnXPosRatio = (self.rightbtn.x()-self.lbWidth) / (gridwidth-self.lbWidth-15)
             self.initialPosition=False
         else:
             if self.resizetimes==2:
                 self.leftbtn.move(leftRange,yPos)
                 self.rightbtn.move(rightRange, yPos)
-                self.leftbtnXPosRatio = (self.leftbtn.x()+self.leftbtn.size().width()-self.lbWidth-2) / self.size().width()
-                self.rightbtnXPosRatio = self.rightbtn.x() / (self.size().width()-self.lbWidth)
+                self.leftbtnXPosRatio = (self.leftbtn.x()+self.leftbtn.size().width()-self.lbWidth-2) / (gridwidth-self.lbWidth-15)
+                self.rightbtnXPosRatio = (self.rightbtn.x()-self.lbWidth) / (gridwidth-self.lbWidth-15)
             else:
-                self.leftbtn.move(self.leftbtnXPosRatio*self.size().width()+self.lbWidth-self.leftbtn.size().width()+2, yPos)
-                self.rightbtn.move(self.rightbtnXPosRatio*(self.size().width()-self.lbWidth), yPos)
+                self.leftbtn.move(self.leftbtnXPosRatio*(gridwidth-self.lbWidth-15)+self.lbWidth-self.leftbtn.size().width()+2, yPos)
+                self.rightbtn.move(self.rightbtnXPosRatio*(gridwidth-self.lbWidth-15)+self.lbWidth, yPos)
         self.leftbtn.setXrange(leftRange, self.rightbtn.x()-self.leftbtn.size().width()+0.5)
         self.rightbtn.setXrange(self.leftbtn.x()+self.leftbtn.size().width()-0.5, rightRange)
         self.widget.setRightLineXPos(self.rightbtn.x())
@@ -417,10 +418,10 @@ class GridArea(QWidget):
         self.columndWidth=self.widget.getgridstep()
         
     def leftbtnRelease(self):
-        self.leftbtnXPosRatio = (self.leftbtn.x()+self.leftbtn.size().width()-self.lbWidth) / self.size().width()
+        self.leftbtnXPosRatio = (self.leftbtn.x()+self.leftbtn.size().width()-self.lbWidth) / (self.size().width()-25-self.lbWidth-15)
 
     def rightbtnRelease(self):
-        self.rightbtnXPosRatio=self.rightbtn.x()/(self.size().width()-25)
+        self.rightbtnXPosRatio=(self.rightbtn.x()-self.lbWidth)/(self.size().width()-25-self.lbWidth-15)
         
     def leftbtnMove(self):
         self.widget.setLeftLineXPos(self.leftbtn.x()+self.leftbtn.size().width()-2)
@@ -452,7 +453,7 @@ class GridArea(QWidget):
         else:
             x=(rightbtnPos-self.lbWidth)*self.timeRange/(10*self.columndWidth)
             # change time to seconds
-            self.endTime=int(x)
+            self.endTime=int(x)+self.timeRangeMin
         self.rightbtn.setToolTip(Second2Time(self.endTime))
         QToolTip.showText(QPoint(global_point), Second2Time(self.endTime))
         self.rightbtn.setToolTip(Second2Time(self.endTime))
@@ -479,7 +480,7 @@ class GridArea(QWidget):
         else:
             x=(rightbtnPos-self.lbWidth)*self.timeRange/(10*self.columndWidth)
             # change time to seconds
-            self.endTime=int(x)
+            self.endTime=int(x)+self.timeRangeMin
 
         self.leftbtn.setToolTip(Second2Time(self.startTime))
         self.rightbtn.setToolTip(Second2Time(self.endTime))
