@@ -4,7 +4,7 @@
     <SchemaVersion>2.0</SchemaVersion>
     <ProjectGuid>769ad472-e136-4d89-b469-0183ffafddb6</ProjectGuid>
     <ProjectHome>.</ProjectHome>
-    <StartupFile>Windows.py</StartupFile>
+    <StartupFile>UI\Sidebar\PeopleItem.py</StartupFile>
     <SearchPath>
     </SearchPath>
     <WorkingDirectory>.</WorkingDirectory>
@@ -61,6 +61,9 @@
     </Compile>
     <Compile Include="UI\EventTimeline\TimeLine.py" />
     <Compile Include="Timer.py" />
+    <Compile Include="UI\Sidebar\PeopleItem.py">
+      <SubType>Code</SubType>
+    </Compile>
     <Compile Include="Windows.py">
       <SubType>Code</SubType>
     </Compile>
@@ -70,6 +73,7 @@
     <Folder Include="Pictures\" />
     <Folder Include="UI\EventTimeline\" />
     <Folder Include="UI\DateMenu\" />
+    <Folder Include="UI\Sidebar\" />
   </ItemGroup>
   <ItemGroup>
     <Content Include="Pictures\fforward.png" />
