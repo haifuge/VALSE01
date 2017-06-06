@@ -78,10 +78,12 @@
   <ItemGroup>
     <Content Include="Pictures\fforward.png" />
     <Content Include="Pictures\freverse.png" />
+    <Content Include="Pictures\invisible.png" />
     <Content Include="Pictures\pause.png" />
     <Content Include="Pictures\play.png" />
     <Content Include="Pictures\playbuttons.png" />
     <Content Include="Pictures\stop.png" />
+    <Content Include="Pictures\visible.png" />
   </ItemGroup>
   <Import Project="$(MSBuildExtensionsPath32)\Microsoft\VisualStudio\v$(VisualStudioVersion)\Python Tools\Microsoft.PythonTools.targets" />
   <!-- Uncomment the CoreCompile target to enable the Build command in
