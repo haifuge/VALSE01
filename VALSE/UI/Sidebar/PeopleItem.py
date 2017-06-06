@@ -45,6 +45,7 @@ class PeopleItem(QWidget):
         else:
             self.visible=True
             self.btnVisible.setIcon(QIcon(r'Pictures/visible.png'))
+
 class QtText(QLineEdit):
     def __init__(self, parent=None):
         super().__init__(parent)

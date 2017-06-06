@@ -4,7 +4,7 @@
     <SchemaVersion>2.0</SchemaVersion>
     <ProjectGuid>769ad472-e136-4d89-b469-0183ffafddb6</ProjectGuid>
     <ProjectHome>.</ProjectHome>
-    <StartupFile>UI\Sidebar\PeopleItem.py</StartupFile>
+    <StartupFile>Windows.py</StartupFile>
     <SearchPath>
     </SearchPath>
     <WorkingDirectory>.</WorkingDirectory>
@@ -21,6 +21,12 @@
     <EnableUnmanagedDebugging>false</EnableUnmanagedDebugging>
   </PropertyGroup>
   <ItemGroup>
+    <Compile Include="Common\CommonMethod.py">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="Common\CommonTools.py">
+      <SubType>Code</SubType>
+    </Compile>
     <Compile Include="DataEntity.py" />
     <Compile Include="UI\DateMenu\CustomFrequencyPanel.py">
       <SubType>Code</SubType>
@@ -69,6 +75,7 @@
     </Compile>
   </ItemGroup>
   <ItemGroup>
+    <Folder Include="Common\" />
     <Folder Include="UI\" />
     <Folder Include="Pictures\" />
     <Folder Include="UI\EventTimeline\" />

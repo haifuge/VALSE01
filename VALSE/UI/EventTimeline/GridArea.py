@@ -3,6 +3,7 @@ from PyQt5.QtCore import *
 from PyQt5.QtGui import *
 from UI.EventTimeline import EventGrid
 from UI.EventTimeline import DragButton
+from Common import CommonMethod
 
 class GridArea(QWidget):
     # grid time range
@@ -105,8 +106,8 @@ class GridArea(QWidget):
             x=(leftbtnPos-self.lbWidth)*self.timeRange/(10*self.columndWidth)
             # change time to seconds
             self.startTime=int(x)+self.timeRangeMin
-        QToolTip.showText(QPoint(global_point), Second2Time(self.startTime))
-        self.leftbtn.setToolTip(Second2Time(self.startTime))
+        QToolTip.showText(QPoint(global_point), CommonMethod.Second2Time(self.startTime))
+        self.leftbtn.setToolTip(CommonMethod.Second2Time(self.startTime))
 
         self.widget.repaint()
         
@@ -123,9 +124,9 @@ class GridArea(QWidget):
             x=(rightbtnPos-self.lbWidth)*self.timeRange/(10*self.columndWidth)
             # change time to seconds
             self.endTime=int(x)+self.timeRangeMin
-        self.rightbtn.setToolTip(Second2Time(self.endTime))
-        QToolTip.showText(QPoint(global_point), Second2Time(self.endTime))
-        self.rightbtn.setToolTip(Second2Time(self.endTime))
+        self.rightbtn.setToolTip(CommonMethod.Second2Time(self.endTime))
+        QToolTip.showText(QPoint(global_point), CommonMethod.Second2Time(self.endTime))
+        self.rightbtn.setToolTip(CommonMethod.Second2Time(self.endTime))
 
         self.widget.repaint()
         
@@ -151,11 +152,5 @@ class GridArea(QWidget):
             # change time to seconds
             self.endTime=int(x)+self.timeRangeMin
 
-        self.leftbtn.setToolTip(Second2Time(self.startTime))
-        self.rightbtn.setToolTip(Second2Time(self.endTime))
-
-def Second2Time(second):
-    hour=int(second/3600)
-    minute=int((second-hour*3600)/60)
-    sec=second%60
-    return str(hour)+':'+str(minute)+':'+str(int(sec))
+        self.leftbtn.setToolTip(CommonMethod.Second2Time(self.startTime))
+        self.rightbtn.setToolTip(CommonMethod.Second2Time(self.endTime))
