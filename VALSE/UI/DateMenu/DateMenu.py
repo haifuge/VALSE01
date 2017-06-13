@@ -6,6 +6,7 @@ from UI.DateMenu import DateSelector
 from UI.DateMenu import CustomFrequencyPanel
 
 class DateMenu(QWidget):
+    closeSignal=pyqtSignal()
     startDate=''
     endDate=''
     frequency=[]
@@ -131,9 +132,11 @@ class DateMenu(QWidget):
         s=self.sender()
         if s==self.btnCancel:
             self.close()
+            self.closeSignal.emit()
         if s==self.btnConfirm:
-            #self.close()
+            self.close()
             print(self.startDate, self.endDate, self.frequency, self.location, sep=', ')
+            self.closeSignal.emit()
 
     def frequencyClicked(self):
         self.freqSender=self.sender();

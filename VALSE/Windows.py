@@ -4,6 +4,7 @@ from PyQt5.QtGui import *
 from PyQt5.QtWidgets import *
 from UI.EventTimeline import TimeLine
 from UI.DateMenu import DateMenu
+from UI.Sidebar import PeopleSidebar
 
 class MainWindow(QMainWindow):
     count=0
@@ -24,6 +25,10 @@ class MainWindow(QMainWindow):
         datePanel.addAction("Show Date Panel")
         datePanel.triggered[QAction].connect(self.windowAction)
 
+        sidebars=bar.addMenu("Sidebars")
+        sidebars.addAction("People")
+        sidebars.triggered[QAction].connect(self.windowAction)
+
     def windowAction(self, q):
         if q.text()=="New":
             self.count=self.count+1
@@ -37,11 +42,26 @@ class MainWindow(QMainWindow):
         if q.text()=='Titled':
             self.mdi.tileSubWindows()
         if q.text()=='Show Date Panel':
-            dateMenu=QMdiSubWindow()
-            dateMenu.setWidget(DateMenu.DateMenu())
-            dateMenu.setWindowTitle("Datetiem Selection")
-            self.mdi.addSubWindow(dateMenu)
-            dateMenu.show()
+            self.dateMenu=QMdiSubWindow()
+            self.dateWindow=DateMenu.DateMenu()
+            self.dateWindow.closeSignal.connect(self.dateWindowClose)
+            self.dateMenu.setWidget(self.dateWindow)
+            self.dateMenu.setWindowTitle("Date Selection")
+            self.dateMenu.setWindowFlags(Qt.Window | Qt.WindowTitleHint | Qt.CustomizeWindowHint)
+            self.dateMenu.setMaximumWidth(265)
+            self.dateMenu.setMaximumHeight(340)
+            self.mdi.addSubWindow(self.dateMenu)
+            self.dateMenu.show()
+        if q.text()=='People':
+            peoplesb=QMdiSubWindow()
+            peoplesb.setWidget(PeopleSidebar.PeopleSidebar())
+            peoplesb.setWindowFlags(Qt.Window | Qt.WindowTitleHint | Qt.CustomizeWindowHint)
+            peoplesb.setMaximumWidth(265)
+            self.mdi.addSubWindow(peoplesb)
+            peoplesb.show()
+
+    def dateWindowClose(e):
+        self.dateMenu.close()
 
 if __name__=='__main__':
     app=QApplication(sys.argv)

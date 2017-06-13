@@ -2,7 +2,9 @@ import sys
 from PyQt5.QtWidgets import *
 from PyQt5.QtCore import *
 from PyQt5.QtGui import *
-
+from UI.Sidebar import MarkerButton
+from UI.Sidebar import MarkerSelection
+from Common import CommonTools
 
 class PeopleItem(QWidget):
     visible=True;
@@ -11,33 +13,49 @@ class PeopleItem(QWidget):
         self.initUI()
     def initUI(self):
         self.height=25
-        self.width=220
+        self.width=250
         self.setMinimumSize(self.width,self.height)
         self.setMaximumSize(self.width,self.height)
         self.setGeometry(300,300,self.width, self.height)
 
         self.txtName=QtText(self)
-        self.txtName.move(2,2)
+        self.txtName.move(2,1)
         self.txtName.setText('Person 1')
         self.txtName.setReadOnly(True)
         self.txtName.setFrame(False)
-        bgColor=self.palette().color(QPalette.Background)
-        self.txtName.setStyleSheet('background-color: ' + bgColor.name())
+        self.bgColor=self.palette().color(QPalette.Background)
+        self.txtName.setStyleSheet('background-color: ' + self.bgColor.name())
+        self.txtName.click.connect(self.mouseClick)
 
-        self.btnMarker=MarkerButton(self)
-        self.btnMarker.setGeometry(QRect(160,2,20,20))
+        self.markerColor=CommonTools.Color.red
+        self.markerShape=CommonTools.Shape.square
+        self.btnMarker=MarkerButton.MarkerButton(self, self.markerShape, self.markerColor)
+        self.btnMarker.setGeometry(QRect(200,2,20,20))
         self.btnMarker.clicked.connect(self.markerClicked)
-        self.btnMarker.setStyleSheet('background-color: ' + bgColor.name()+'; border:none;')
+        self.btnMarker.setStyleSheet('background-color: ' + self.bgColor.name()+'; border:none;')
 
         self.btnVisible=QPushButton(self)
         self.btnVisible.setIcon(QIcon(r'Pictures/visible.png'))
         self.btnVisible.clicked.connect(self.visibleClicked)
-        self.btnVisible.setGeometry(190,2,20,20)
-        self.btnVisible.setStyleSheet('background-color: ' + bgColor.name()+'; border:none;')
+        self.btnVisible.setGeometry(225,2,20,20)
+        self.btnVisible.setStyleSheet('background-color: ' + self.bgColor.name()+'; border:none;')
         self.visible=True
 
     def markerClicked(self):
-        print('clicked')
+        ms=MarkerSelection.MarkerSelection()
+        ms.setWindowFlags(Qt.FramelessWindowHint)
+        point=self.btnMarker.rect().topRight()
+        global_point=self.btnMarker.mapToGlobal(point)
+        ms.move(global_point.x(),global_point.y())
+        ms.signal.connect(self.markerSelected)
+        ms.SetMarker(self.markerColor, self.markerShape)
+        ms.exec_()
+
+    def markerSelected(self, markerInfo):
+        self.markerColor=markerInfo[0]
+        self.markerShape=markerInfo[1]
+        self.btnMarker.SetMarker(self.markerColor, self.markerShape)
+
     def visibleClicked(self):
         if self.visible:
             self.visible=False
@@ -46,10 +64,23 @@ class PeopleItem(QWidget):
             self.visible=True
             self.btnVisible.setIcon(QIcon(r'Pictures/visible.png'))
 
+    selected=False
+    def mouseClick(self):
+        print(self.bgColor.name())
+        if self.selected:
+            self.txtName.setStyleSheet('background-color:'+self.bgColor.name())
+            self.selected=False
+        else:
+            self.txtName.setStyleSheet('background-color:#778899')
+            self.selected=True
+
+
 class QtText(QLineEdit):
+    click=pyqtSignal()
     def __init__(self, parent=None):
         super().__init__(parent)
-        self.setFixedWidth(150)
+        self.setFixedHeight(23)
+        self.setFixedWidth(190)
     def focusOutEvent(self, e):
         self.setReadOnly(True)
     def mouseDoubleClickEvent(self, e):
@@ -63,19 +94,10 @@ class QtText(QLineEdit):
         else:
             super().keyPressEvent(e)
 
+    def mousePressEvent(self, QMouseEvent):
+        self.click.emit()
 
-class MarkerButton(QPushButton):
-    def __init__(self, parent=None):
-        super().__init__(parent)
-        self.resize(20,20)
-    def paintEvent(self,e):
-        qp=QPainter()
-        qp.begin(self)
-        self.drawMarker(qp)
-        qp.end()
-    def drawMarker(self, qp):
-        qp.setPen(Qt.red)
-        qp.drawRect(1,1,18,18)
+
 
 if __name__=='__main__':
     app=QApplication(sys.argv)

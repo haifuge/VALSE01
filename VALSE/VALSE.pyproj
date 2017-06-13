@@ -67,7 +67,16 @@
     </Compile>
     <Compile Include="UI\EventTimeline\TimeLine.py" />
     <Compile Include="Timer.py" />
+    <Compile Include="UI\Sidebar\MarkerButton.py">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="UI\Sidebar\MarkerSelection.py">
+      <SubType>Code</SubType>
+    </Compile>
     <Compile Include="UI\Sidebar\PeopleItem.py">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="UI\Sidebar\PeopleSidebar.py">
       <SubType>Code</SubType>
     </Compile>
     <Compile Include="Windows.py">

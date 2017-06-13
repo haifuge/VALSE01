@@ -1,4 +1,4 @@
-import sys, math
+import sys
 import time
 from PyQt5.QtWidgets import *
 from PyQt5.QtCore import *
@@ -113,12 +113,6 @@ class VerifiedTab(QWidget):
         self.endTime=value[1]
         self.grid.setTimeRange(self.startTime, self.endTime)
 
-
-def Second2Time(second):
-    hour=int(second/3600)
-    minute=int((second-hour*3600)/60)
-    sec=second%60
-    return str(hour)+':'+str(minute)+':'+str(int(sec))
 
 if __name__=='__main__':
     app=QApplication(sys.argv)

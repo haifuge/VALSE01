@@ -2,6 +2,7 @@ from PyQt5.QtWidgets import *
 from PyQt5.QtCore import *
 from PyQt5.QtGui import *
 from UI.EventTimeline import DragButton
+from Common import CommonMethod
 
 # the bottom timeline
 class Tileline(QWidget):
@@ -70,8 +71,8 @@ class Tileline(QWidget):
         self.timeRangeChanged.emit()
         point=self.leftbtn.rect().topRight()
         global_point=self.leftbtn.mapToGlobal(point)
-        QToolTip.showText(QPoint(global_point), Second2Time(self.startTime))
-        self.leftbtn.setToolTip(Second2Time(self.startTime))
+        QToolTip.showText(QPoint(global_point), CommonMethod.Second2Time(self.startTime))
+        self.leftbtn.setToolTip(CommonMethod.Second2Time(self.startTime))
         
         self.repaint()
     def rightbtnMove(self):
@@ -84,8 +85,8 @@ class Tileline(QWidget):
         self.timeRangeChanged.emit()
         point=self.rightbtn.rect().topRight()
         global_point=self.rightbtn.mapToGlobal(point)
-        QToolTip.showText(QPoint(global_point), Second2Time(self.endTime))
-        self.rightbtn.setToolTip(Second2Time(self.endTime))
+        QToolTip.showText(QPoint(global_point), CommonMethod.Second2Time(self.endTime))
+        self.rightbtn.setToolTip(CommonMethod.Second2Time(self.endTime))
         
         self.repaint()
     def getTimePeriodRange(self):
@@ -138,37 +139,4 @@ class Tileline(QWidget):
         points=QPolygon([QPoint(75,70),QPoint(70,80),QPoint(80,80)])
         qp.drawPolygon(points)
 
-    def drawCircle(self, qp, x, y, color):
-        r=10
-        x=x-r/2
-        y=y-r/2
-        qp.setPen(QPen(color,2,Qt.SolidLine))
-        qp.drawEllipse(x,y,r,r)
 
-    def drawSquare(self, qp, x,y,color):
-        length=10
-        x=x-length/2
-        y=y-length/2
-        qp.setPen(QPen(color, 2, Qt.SolidLine))
-        qp.drawRect(x,y,length,length)
-
-    def drawCross(self, qp, x, y, color):
-        length=10
-        x=x-length/2
-        y=y-length/2
-        qp.setPen(QPen(color,2,Qt.SolidLine))
-        qp.drawLine(x,y,x+length,y+length)
-        qp.drawLine(x+length,y,x,y+length)
-
-    def drawTriangle(self, qp, x, y, color):
-        r=8
-        x1,y1=x,y-r
-        x2,y2=x-r*math.sqrt(3)/2,y+r/2
-        x3,y3=x+r*math.sqrt(3)/2,y+r/2
-        points=QPolygon([QPoint(x1,y1),QPoint(x2,y2),QPoint(x3,y3)])
-
-def Second2Time(second):
-    hour=int(second/3600)
-    minute=int((second-hour*3600)/60)
-    sec=second%60
-    return str(hour)+':'+str(minute)+':'+str(int(sec))
