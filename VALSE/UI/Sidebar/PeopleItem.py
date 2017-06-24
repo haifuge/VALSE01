@@ -66,7 +66,6 @@ class PeopleItem(QWidget):
 
     selected=False
     def mouseClick(self):
-        print(self.bgColor.name())
         if self.selected:
             self.txtName.setStyleSheet('background-color:'+self.bgColor.name())
             self.selected=False

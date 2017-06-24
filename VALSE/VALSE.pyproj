@@ -34,7 +34,7 @@
     <Compile Include="UI\DateMenu\DateMenu.py">
       <SubType>Code</SubType>
     </Compile>
-    <Compile Include="DBOperation.py" />
+    <Compile Include="Common\DBOperation.py" />
     <Compile Include="module1.py">
       <SubType>Code</SubType>
     </Compile>
@@ -67,6 +67,9 @@
     </Compile>
     <Compile Include="UI\EventTimeline\TimeLine.py" />
     <Compile Include="Timer.py" />
+    <Compile Include="UI\MapWindow\VectorTrail.py">
+      <SubType>Code</SubType>
+    </Compile>
     <Compile Include="UI\Sidebar\MarkerButton.py">
       <SubType>Code</SubType>
     </Compile>
@@ -85,13 +88,16 @@
   </ItemGroup>
   <ItemGroup>
     <Folder Include="Common\" />
+    <Folder Include="Maps\" />
     <Folder Include="UI\" />
     <Folder Include="Pictures\" />
     <Folder Include="UI\EventTimeline\" />
     <Folder Include="UI\DateMenu\" />
+    <Folder Include="UI\MapWindow\" />
     <Folder Include="UI\Sidebar\" />
   </ItemGroup>
   <ItemGroup>
+    <Content Include="Maps\testMap.png" />
     <Content Include="Pictures\fforward.png" />
     <Content Include="Pictures\freverse.png" />
     <Content Include="Pictures\invisible.png" />

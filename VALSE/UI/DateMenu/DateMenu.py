@@ -138,6 +138,9 @@ class DateMenu(QWidget):
             print(self.startDate, self.endDate, self.frequency, self.location, sep=', ')
             self.closeSignal.emit()
 
+    def initLocation():
+
+
     def frequencyClicked(self):
         self.freqSender=self.sender();
         if self.freqSender==self.btnWeekly:
@@ -186,12 +189,6 @@ class DateMenu(QWidget):
         if self.btnSender==self.btnDateEnd:
             self.endDate=s
 
-class UnitFrequency(QWidget):
-    def __init__(self):
-        super().__init__()
-        self.initUI()
-    def initUI(self):
-        pass
 
 if __name__=='__main__':
     app=QApplication(sys.argv)
