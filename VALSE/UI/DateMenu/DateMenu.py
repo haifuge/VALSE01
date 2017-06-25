@@ -4,6 +4,7 @@ from PyQt5.QtCore import *
 from PyQt5.QtGui import *
 from UI.DateMenu import DateSelector
 from UI.DateMenu import CustomFrequencyPanel
+from Common import DBOperation
 
 class DateMenu(QWidget):
     closeSignal=pyqtSignal()
@@ -95,8 +96,7 @@ class DateMenu(QWidget):
         lblLocation.adjustSize()
         lblLocation.move(20,txtY)
         self.btnLocation=QComboBox(self)
-        self.btnLocation.addItems(['Location1','Location2','Location3'])
-        self.location='Location1'
+        self.initLocation()
         self.btnLocation.move(txtX,txtY)
         self.btnLocation.resize(txtWidth,txtHeight)
         self.btnLocation.currentTextChanged.connect(self.setLocation)
@@ -138,7 +138,13 @@ class DateMenu(QWidget):
             print(self.startDate, self.endDate, self.frequency, self.location, sep=', ')
             self.closeSignal.emit()
 
-    def initLocation():
+    def initLocation(self):
+        dbop=DBOperation.DBOperator()
+        locations=dbop.ExecSql('select name from location',1)
+        print(locations)
+        for i in range(len(locations)):
+            self.btnLocation.addItem(locations[i][0])
+        self.location=locations[0][0]
 
 
     def frequencyClicked(self):
