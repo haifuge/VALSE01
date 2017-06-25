@@ -60,9 +60,12 @@ class VectorTrail(QWidget):
 
 
 class Map(QLabel):
-  
+
     def __init__(self, parent=None):
         super().__init__(parent);
+        
+    def setMapInfo(self, mapData):
+        self.mapData=mapData;
 
     def setImage(self, path):
         self.img=QPixmap(path)
@@ -75,12 +78,16 @@ class Map(QLabel):
         qp.begin(self)
         #CommonMethod.DrawMarker(self.i*self.step, self.i*self.step, qp, CommonTools.Shape.cross, CommonTools.Color.red, 15)
         #qp.setPen(QPen(QColor.black))
-        qp.drawPixmap(0,0,self.img)
+        qp.drawPixmap(0,0,self.pix)
         qp.drawRect(10,10,10,10)
         qp.end()
     
     def resizeEvent(self, e):
-        self.img=self.img.scaled(self.size(),Qt.IgnoreAspectRatio, Qt.FastTransformation)
+        self.pix=self.img.scaled(self.size(),Qt.IgnoreAspectRatio, Qt.SmoothTransformation)
+
+    def Draw(self, timestamp):
+        self.timestamp=timestamp
+        self.repaint()
 
 if __name__=='__main__':
     app=QApplication(sys.argv)
