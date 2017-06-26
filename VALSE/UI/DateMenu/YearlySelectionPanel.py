@@ -64,7 +64,7 @@ class YearlySelectionPanel(QWidget):
     def weekClicked(self, n):
         s=self.sender()
         if s.isChecked():
-            self.customDays[n]=1
+            self.customDays[n]=n
         else:
             self.customDays[n]=0
     def getTimes(self):

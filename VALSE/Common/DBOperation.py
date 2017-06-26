@@ -1,13 +1,14 @@
 import pypyodbc
 
 class DBOperator():
-    conn=pypyodbc.connect("Driver={SQL Server};"
+    
+    # sql: query string, n: number of columns in query string
+    def ExecSql(self, sql, n):
+        self.conn=pypyodbc.connect("Driver={SQL Server};"
                       "Server=108.52.45.69,1434;"
                       "Database=test;"
                       "uid=sa;"
                       "pwd=64212917@Asiankitchen")
-    # sql: query string, n: number of columns in query string
-    def ExecSql(self, sql, n):
         cursor=self.conn.cursor()
         #comm=("select * from Customers")
         comm=(sql)

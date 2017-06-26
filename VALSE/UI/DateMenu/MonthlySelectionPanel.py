@@ -40,7 +40,7 @@ class MonthlySelectionPanel(QWidget):
     def btnClicked(self):
         s=self.sender()
         if s.isChecked():
-            self.customDays[int(s.text())]=1
+            self.customDays[int(s.text())]=int(s.text())
         else:
             self.customDays[int(s.text())]=0
     def getTimes(self):

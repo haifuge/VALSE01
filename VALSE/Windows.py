@@ -60,8 +60,18 @@ class MainWindow(QMainWindow):
             self.mdi.addSubWindow(peoplesb)
             peoplesb.show()
 
-    def dateWindowClose(e):
+    def dateWindowClose(self, l):
+        # [startDate, endDate, weekday, location]
+        print(l)
+        self.dateInfo=l
         self.dateMenu.close()
+        if len(l)==1:
+            pass
+        else:
+            self.getData()
+
+    def getData(self):
+        pass
 
 if __name__=='__main__':
     app=QApplication(sys.argv)

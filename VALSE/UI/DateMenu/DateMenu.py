@@ -7,7 +7,7 @@ from UI.DateMenu import CustomFrequencyPanel
 from Common import DBOperation
 
 class DateMenu(QWidget):
-    closeSignal=pyqtSignal()
+    closeSignal=pyqtSignal(list)
     startDate=''
     endDate=''
     frequency=[]
@@ -67,6 +67,8 @@ class DateMenu(QWidget):
         self.btnWeekly.setCheckable(True)
         self.btnWeekly.move(txtX,txtY)
         self.btnWeekly.resize(txtWidth,txtHeight)
+        self.btnWeekly.setChecked(True)
+        self.frequency=[1,2,3,4,5,6,7]
 
         txtY=txtY+yInterval-4;
         self.btnMonthly=QPushButton(self)
@@ -131,17 +133,15 @@ class DateMenu(QWidget):
     def btnDecClicked(self):
         s=self.sender()
         if s==self.btnCancel:
+            self.closeSignal.emit([0])
             self.close()
-            self.closeSignal.emit()
         if s==self.btnConfirm:
+            self.closeSignal.emit([self.startDate, self.endDate, self.frequency, self.location])
             self.close()
-            print(self.startDate, self.endDate, self.frequency, self.location, sep=', ')
-            self.closeSignal.emit()
 
     def initLocation(self):
         dbop=DBOperation.DBOperator()
         locations=dbop.ExecSql('select name from location',1)
-        print(locations)
         for i in range(len(locations)):
             self.btnLocation.addItem(locations[i][0])
         self.location=locations[0][0]
@@ -154,19 +154,19 @@ class DateMenu(QWidget):
             self.btnMonthly.setChecked(False)
             self.btnYearly.setChecked(False)
             self.btnCustom.setChecked(False)
-            self.frequency=[1,1,1,1,1,1,1]
+            self.frequency=[1,2,3,4,5,6,7]
         if self.freqSender==self.btnMonthly:
             self.btnWeekly.setChecked(False)
             self.btnMonthly.setChecked(True)
             self.btnYearly.setChecked(False)
             self.btnCustom.setChecked(False)
-            self.frequency=[1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1]
+            self.frequency=[1,2,3,4,5,6,7,8,9,10,11,12,13,14,15,16,17,18,19,20,21,22,23,24,25,26,27,28,29,30,31]
         if self.freqSender==self.btnYearly:
             self.btnWeekly.setChecked(False)
             self.btnMonthly.setChecked(False)
             self.btnYearly.setChecked(True)
             self.btnCustom.setChecked(False)
-            self.frequency=[1,1,1,1,1,1,1,1,1,1,1,1]
+            self.frequency=[1,2,3,4,5,6,7,8,9,10,11,12]
         if self.freqSender==self.btnCustom:
             self.btnWeekly.setChecked(False)
             self.btnMonthly.setChecked(False)
