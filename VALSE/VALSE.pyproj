@@ -4,13 +4,14 @@
     <SchemaVersion>2.0</SchemaVersion>
     <ProjectGuid>769ad472-e136-4d89-b469-0183ffafddb6</ProjectGuid>
     <ProjectHome>.</ProjectHome>
-    <StartupFile>Windows.py</StartupFile>
+    <StartupFile>UI\MapWindow\VectorTrail.py</StartupFile>
     <SearchPath>
     </SearchPath>
     <WorkingDirectory>.</WorkingDirectory>
     <OutputPath>.</OutputPath>
     <Name>VALSE</Name>
     <RootNamespace>VALSE</RootNamespace>
+    <InterpreterId>Global|PythonCore|3.6</InterpreterId>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)' == 'Debug' ">
     <DebugSymbols>true</DebugSymbols>
@@ -28,6 +29,9 @@
       <SubType>Code</SubType>
     </Compile>
     <Compile Include="DataEntity.py" />
+    <Compile Include="module2.py">
+      <SubType>Code</SubType>
+    </Compile>
     <Compile Include="UI\DateMenu\CustomFrequencyPanel.py">
       <SubType>Code</SubType>
     </Compile>
@@ -70,6 +74,9 @@
     <Compile Include="UI\MapWindow\VectorTrail.py">
       <SubType>Code</SubType>
     </Compile>
+    <Compile Include="UI\Object\Marker.py">
+      <SubType>Code</SubType>
+    </Compile>
     <Compile Include="UI\Sidebar\MarkerButton.py">
       <SubType>Code</SubType>
     </Compile>
@@ -94,6 +101,7 @@
     <Folder Include="UI\EventTimeline\" />
     <Folder Include="UI\DateMenu\" />
     <Folder Include="UI\MapWindow\" />
+    <Folder Include="UI\Object\" />
     <Folder Include="UI\Sidebar\" />
   </ItemGroup>
   <ItemGroup>
@@ -106,6 +114,9 @@
     <Content Include="Pictures\playbuttons.png" />
     <Content Include="Pictures\stop.png" />
     <Content Include="Pictures\visible.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <InterpreterReference Include="Global|PythonCore|3.6" />
   </ItemGroup>
   <Import Project="$(MSBuildExtensionsPath32)\Microsoft\VisualStudio\v$(VisualStudioVersion)\Python Tools\Microsoft.PythonTools.targets" />
   <!-- Uncomment the CoreCompile target to enable the Build command in

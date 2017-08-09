@@ -4,6 +4,7 @@ from PyQt5.QtCore import *
 from PyQt5.QtGui import *
 from Common import CommonMethod
 from Common import CommonTools
+from UI.Object import Marker
 
 class VectorTrail(QWidget):
     max_x=300.0
@@ -18,13 +19,16 @@ class VectorTrail(QWidget):
 
     def initUI(self):
         self.setMinimumSize(self.width, self.height)
-        self.map=QPixmap('Maps/testMap.png')
+        #self.map=QPixmap('Maps/testMap.png')
         self.lmap=Map(self)
         self.lmap.setImage('Maps/testMap.png');
         self.lmap.setScaledContents(True)
         self.lmap.resize(self.width,self.height)
         self.lmap.move(0,0)
         #self.initTimer()
+
+        marker=Marker.Marker(CommonTools.Color.red, CommonTools.Shape.square, 10,10, 16, self)
+        marker.move(100,100)
 
     def SetMap(self,  maxx, maxy, map_path):
         self.max_x=maxx
@@ -64,8 +68,9 @@ class Map(QLabel):
     def __init__(self, parent=None):
         super().__init__(parent);
         
-    def setMapInfo(self, mapData):
-        self.mapData=mapData;
+        
+    def setMapInfo(self, _mapData):
+        self.mapData=_mapData;
 
     def setImage(self, path):
         self.img=QPixmap(path)
@@ -79,7 +84,7 @@ class Map(QLabel):
         #CommonMethod.DrawMarker(self.i*self.step, self.i*self.step, qp, CommonTools.Shape.cross, CommonTools.Color.red, 15)
         #qp.setPen(QPen(QColor.black))
         qp.drawPixmap(0,0,self.pix)
-        qp.drawRect(10,10,10,10)
+        #qp.drawRect(10,10,10,10)
         qp.end()
     
     def resizeEvent(self, e):
