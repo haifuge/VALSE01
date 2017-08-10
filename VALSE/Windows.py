@@ -5,6 +5,7 @@ from PyQt5.QtWidgets import *
 from UI.EventTimeline import TimeLine
 from UI.DateMenu import DateMenu
 from UI.Sidebar import PeopleSidebar
+from UI.MapWindow import VectorTrail
 
 class MainWindow(QMainWindow):
     count=0
@@ -28,6 +29,10 @@ class MainWindow(QMainWindow):
         sidebars=bar.addMenu("Sidebars")
         sidebars.addAction("People")
         sidebars.triggered[QAction].connect(self.windowAction)
+
+        map=bar.addMenu("Map")
+        map.addAction("Map")
+        map.triggered[QAction].connect(self.windowAction)
 
     def windowAction(self, q):
         if q.text()=="New":
@@ -59,6 +64,13 @@ class MainWindow(QMainWindow):
             peoplesb.setMaximumWidth(265)
             self.mdi.addSubWindow(peoplesb)
             peoplesb.show()
+        if q.text()=='Map':
+            mapWindow=QMdiSubWindow()
+            mapWindow.setWidget(VectorTrail.VectorTrail())
+            mapWindow.setWindowFlags(Qt.Window|Qt.WindowTitleHint|Qt.CustomizeWindowHint)
+            self.mdi.addSubWindow(mapWindow)
+            mapWindow.show()
+
 
     def dateWindowClose(self, l):
         # [startDate, endDate, weekday, location]

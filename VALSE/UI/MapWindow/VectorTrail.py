@@ -30,6 +30,12 @@ class VectorTrail(QWidget):
         marker=Marker.Marker(CommonTools.Color.red, CommonTools.Shape.square, 10,10, 16, self)
         marker.move(100,100)
 
+        marker2=Marker.Marker(CommonTools.Color.blue, CommonTools.Shape.cross,10,10,12,self)
+        marker2.move(200,100)
+
+        marker3=Marker.Marker(CommonTools.Color.green, CommonTools.Shape.triangle,10,10,22,self)
+        marker3.move(150,100)
+
     def SetMap(self,  maxx, maxy, map_path):
         self.max_x=maxx
         self.max_y=maxy
@@ -74,6 +80,8 @@ class Map(QLabel):
 
     def setImage(self, path):
         self.img=QPixmap(path)
+        self.imgWidth=self.img.size().width
+        self.imgHeight=self.img.size().height
 
     def setData(self, arr):
         self.positions=arr;

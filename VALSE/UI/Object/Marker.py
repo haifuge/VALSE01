@@ -16,11 +16,10 @@ class Marker(QWidget):
 
         QToolTip.setFont(QFont('SansSerif',10))
         toolTip=str(self.x)+', '+str(self.y)
-        print(toolTip)
         self.setToolTip(toolTip)
 
-        self.setMinimumSize(100,100)
-        self.move(300,300)
+        self.setMinimumSize(self.size,self.size)
+        #self.move(300,300)
         
         self.setWindowFlags(Qt.FramelessWindowHint)
         self.setAttribute(Qt.WA_TranslucentBackground)
