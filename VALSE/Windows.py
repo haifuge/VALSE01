@@ -117,6 +117,8 @@ class MainWindow(QMainWindow):
                 if self.dateInfo[2][startDate.month()-1]!=0:
                         sDate=QDateTime(startDate).toOffsetFromUtc(QDateTime().offsetFromUtc()).toMSecsSinceEpoch()
                         eDate=QDateTime(startDate.year(), startDate.month()+1, 1, 0,0).toOffsetFromUtc(QDateTime().offsetFromUtc()).toMSecsSinceEpoch()
+                        if eDate>endDate.toOffsetFromUtc(QDateTime().offsetFromUtc()).toMSecsSinceEpoch():
+                            eDate=endDate.toOffsetFromUtc(QDateTime().offsetFromUtc()).toMSecsSinceEpoch()
                         sql+=' union all select d.target_id, d.x, d.y, d.date_time from target t, detection d \
                                   where t.location_id='+location_id+' and t.target_id=d.target_id and d.ts between '+str(sDate)+' and '+str(eDate)+' '
                 t=startDate.addMonths(1)
@@ -136,9 +138,8 @@ class MainWindow(QMainWindow):
                     eDate=QDateTime(endDate).toOffsetFromUtc(QDateTime().offsetFromUtc()).toMSecsSinceEpoch()
                     sql+=' union all select d.target_id, d.x, d.y, d.date_time from target t, detection d \
                                 where t.location_id='+location_id+' and t.target_id=d.target_id and d.ts between '+str(sDate)+' and '+str(eDate)+' '
-        #self.objInfo=dbop.ExecSql(sql, 4)
-        #print(objInfo)
-        print(sql)
+        self.objInfo=dbop.ExecSql(sql, 4)
+        print(objInfo)
         print(self.mapInfo)
 
 if __name__=='__main__':
