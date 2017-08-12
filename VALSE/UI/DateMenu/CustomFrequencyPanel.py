@@ -64,7 +64,9 @@ class CustomFrequencyPanel(QDialog):
             self.close()
         if s==self.btnConfirm:
             self.close()
-            frequency=[]
-            frequency.append(self.ws.customDays)
-            frequency.append(self.ws.getTimes())
+            frequency=self.ws.customDays
+            # does not count every times, set default 1, need confirm with requirement
+            #frequency.append(self.ws.customDays)
+            #frequency.append(self.ws.getTimes())
+            print(self.ws.getTimes())
             self.signal.emit(frequency)

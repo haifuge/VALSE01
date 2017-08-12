@@ -136,6 +136,20 @@ class DateMenu(QWidget):
             self.closeSignal.emit([0])
             self.close()
         if s==self.btnConfirm:
+            if self.startDate=='':
+                msg=QMessageBox()
+                msg.setIcon(QMessageBox.Information)
+                msg.setText('Please select Start Date')
+                msg.setWindowTitle('Information miss')
+                msg.exec_()
+                return 
+            if self.endDate=='':
+                msg=QMessageBox()
+                msg.setIcon(QMessageBox.Information)
+                msg.setText('Please select End Date')
+                msg.setWindowTitle('Information miss')
+                msg.exec_()
+                return 
             self.closeSignal.emit([self.startDate, self.endDate, self.frequency, self.location])
             self.close()
 
@@ -187,6 +201,9 @@ class DateMenu(QWidget):
         point=self.btnSender.rect().topRight()
         global_point=self.btnSender.mapToGlobal(point)
         self.ds.setPosition(global_point.x(), global_point.y())
+        
+        if self.btnSender.text()!='MM/DD/YY':
+            self.ds.setDate(self.btnSender.text())
         self.ds.exec_()
     def setbtnText(self, s):
         self.btnSender.setText(s)

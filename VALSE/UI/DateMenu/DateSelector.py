@@ -20,3 +20,5 @@ class DateSelector(QDialog):
         self.signal.emit(date.toString('MM/dd/yy'))
     def setPosition(self, x,y):
         self.move(x,y)
+    def setDate(self, sdate):
+        self.cal.setSelectedDate(QDate.fromString(sdate,'MM/dd/yy'));
