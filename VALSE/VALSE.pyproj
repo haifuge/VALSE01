@@ -77,6 +77,9 @@
     <Compile Include="UI\Object\Marker.py">
       <SubType>Code</SubType>
     </Compile>
+    <Compile Include="UI\Object\Person.py">
+      <SubType>Code</SubType>
+    </Compile>
     <Compile Include="UI\Sidebar\MarkerButton.py">
       <SubType>Code</SubType>
     </Compile>

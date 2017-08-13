@@ -6,7 +6,7 @@ from Common import CommonMethod
 from Common import CommonTools
 
 class Marker(QWidget):
-    def __init__(self, _color, _shape, _x, _y, _size=16, parent=None):
+    def __init__(self, _color, _shape, _x=10, _y=10, _size=16, parent=None):
         super().__init__(parent)
         self.color=_color
         self.shape=_shape
@@ -31,6 +31,9 @@ class Marker(QWidget):
         qp.begin(self)
         CommonMethod.DrawMarker(self.x,self.y,qp,self.shape,self.color,self.size)
         qp.end()
+    def SetMarker(self, _color, _shape):
+        self.color=_color
+        self.shape=_shape
 
 if __name__=='__main__':
     app=QApplication(sys.argv)

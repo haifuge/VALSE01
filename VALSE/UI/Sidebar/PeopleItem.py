@@ -8,10 +8,14 @@ from Common import CommonTools
 
 class PeopleItem(QWidget):
     visible=True;
-    def __init__(self):
+    def __init__(self, tId, _name='Person 1', _color=CommonTools.Color.red, _shape=CommonTools.Shape.square):
         super().__init__();
-        self.initUI()
-    def initUI(self):
+        self.id=tId
+        self.markerColor=_color
+        self.markerShape=_shape
+        self.initUI(_name)
+
+    def initUI(self, _name):
         self.height=25
         self.width=250
         self.setMinimumSize(self.width,self.height)
@@ -20,15 +24,13 @@ class PeopleItem(QWidget):
 
         self.txtName=QtText(self)
         self.txtName.move(2,1)
-        self.txtName.setText('Person 1')
+        self.txtName.setText(_name)
         self.txtName.setReadOnly(True)
         self.txtName.setFrame(False)
         self.bgColor=self.palette().color(QPalette.Background)
         self.txtName.setStyleSheet('background-color: ' + self.bgColor.name())
         self.txtName.click.connect(self.mouseClick)
 
-        self.markerColor=CommonTools.Color.red
-        self.markerShape=CommonTools.Shape.square
         self.btnMarker=MarkerButton.MarkerButton(self, self.markerShape, self.markerColor)
         self.btnMarker.setGeometry(QRect(200,2,20,20))
         self.btnMarker.clicked.connect(self.markerClicked)
@@ -54,6 +56,11 @@ class PeopleItem(QWidget):
     def markerSelected(self, markerInfo):
         self.markerColor=markerInfo[0]
         self.markerShape=markerInfo[1]
+        self.btnMarker.SetMarker(self.markerColor, self.markerShape)
+
+    def SetMarker(self, _color, _shape):
+        self.markerColor=_color
+        self.markerShape=_shape
         self.btnMarker.SetMarker(self.markerColor, self.markerShape)
 
     def visibleClicked(self):

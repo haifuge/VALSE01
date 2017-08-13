@@ -11,8 +11,9 @@ class VectorTrail(QWidget):
     max_y=300.0
     width=400.0
     height=400.0
-    proportion_scale_x=1.0
-    proportion_scale_y=1.0
+    x_ratio=1.0
+    y_ratio=1.0
+    map_path=''
     def __init__(self):
         super().__init__()
         self.initUI()
@@ -20,30 +21,30 @@ class VectorTrail(QWidget):
     def initUI(self):
         self.setMinimumSize(self.width, self.height)
         #self.map=QPixmap('Maps/testMap.png')
+        self.setWindowTitle('Map')
+        #self.initTimer()
         self.lmap=Map(self)
         self.lmap.setImage('Maps/testMap.png');
         self.lmap.setScaledContents(True)
         self.lmap.resize(self.width,self.height)
         self.lmap.move(0,0)
-        #self.initTimer()
 
-        marker=Marker.Marker(CommonTools.Color.red, CommonTools.Shape.square, 10,10, 16, self)
-        marker.move(100,100)
+        #marker=Marker.Marker(CommonTools.Color.red, CommonTools.Shape.square, 10,10, 16, self)
+        #marker.move(100,100)
 
-        marker2=Marker.Marker(CommonTools.Color.blue, CommonTools.Shape.cross,10,10,12,self)
-        marker2.move(200,100)
+        #marker2=Marker.Marker(CommonTools.Color.blue, CommonTools.Shape.cross,10,10,12,self)
+        #marker2.move(200,100)
 
-        marker3=Marker.Marker(CommonTools.Color.green, CommonTools.Shape.triangle,10,10,22,self)
-        marker3.move(150,100)
+        #marker3=Marker.Marker(CommonTools.Color.green, CommonTools.Shape.triangle,10,10,22,self)
+        #marker3.move(150,100)
 
     def SetMap(self,  maxx, maxy, map_path):
         self.max_x=maxx
         self.max_y=maxy
-        self.proportion_scale_x=self.max_x/self.width
-        self.proportion_scale_y=self.max_y/self.height
-        self.map=QPixmap(map_path)
+        self.x_ratio=self.max_x/self.width
+        self.y_ratio=self.max_y/self.height
         
-        self.lmap.setPixmap(map);
+        self.lmap.setImage('Maps/'+map_path);
         self.lmap.setScaledContents(True)
         self.lmap.resize(self.width,self.height)
         self.lmap.move(0,0)
@@ -67,6 +68,7 @@ class VectorTrail(QWidget):
         if self.i==self.n:
             self.timer.stop()
             self.setFixedSize(QWIDGETSIZE_MAX, QWIDGETSIZE_MAX)
+
 
 
 class Map(QLabel):

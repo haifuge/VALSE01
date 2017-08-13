@@ -7,7 +7,7 @@ from UI.Sidebar import PeopleItem
 class PeopleSidebar(QWidget):
     def __init__(self):
         super().__init__()
-        self.pItems=[PeopleItem.PeopleItem()]*4
+        self.pItems=[]
         self.initUI()
     def initUI(self):
         self.setWindowTitle('People')
@@ -19,16 +19,7 @@ class PeopleSidebar(QWidget):
         self.vlayout=QVBoxLayout()
         self.vlayout.setContentsMargins(QMargins(0,0,0,0))
         self.vlayout.setSpacing(0)
-        for item in self.pItems:
-            item=PeopleItem.PeopleItem()
-            item.setGeometry(0,0,250,25)
-            self.vlayout.addWidget(item)
-            line=QFrame()
-            line.setContentsMargins(QMargins(0,0,0,0))
-
-            line.setFrameShape(QFrame.HLine)
-            line.setFrameShadow(QFrame.Sunken)
-            self.vlayout.addWidget(line)
+        
         self.vlayout.addStretch(1)
         self.setLayout(self.vlayout)
 
@@ -39,6 +30,24 @@ class PeopleSidebar(QWidget):
         qp.setPen(pen)
         qp.drawRect(1,1,self.size().width()-2,self.size().height()-2)
         qp.end()
+
+    # [target_id, name, color, shape]
+    def SetObjectData(self, data):
+
+        for i in range(len(data)):
+            pi=PeopleItem.PeopleItem(data[i][0],data[i][1],data[i][2],data[i][3])
+            self.pItems.append(pi)
+
+        for item in self.pItems:
+            #item=PeopleItem.PeopleItem()
+            item.setGeometry(0,0,250,25)
+            self.vlayout.addWidget(item)
+            line=QFrame()
+            line.setContentsMargins(QMargins(0,0,0,0))
+
+            line.setFrameShape(QFrame.HLine)
+            line.setFrameShadow(QFrame.Sunken)
+            self.vlayout.addWidget(line)
 
 if __name__=='__main__':
     app=QApplication(sys.argv)
