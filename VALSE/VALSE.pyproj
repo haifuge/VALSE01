@@ -112,6 +112,8 @@
     <Content Include="Pictures\fforward.png" />
     <Content Include="Pictures\freverse.png" />
     <Content Include="Pictures\invisible.png" />
+    <Content Include="Pictures\lighter.png" />
+    <Content Include="Pictures\light_normal.png" />
     <Content Include="Pictures\pause.png" />
     <Content Include="Pictures\play.png" />
     <Content Include="Pictures\playbuttons.png" />

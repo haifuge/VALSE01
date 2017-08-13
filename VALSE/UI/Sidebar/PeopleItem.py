@@ -8,6 +8,7 @@ from Common import CommonTools
 
 class PeopleItem(QWidget):
     visible=True;
+    selected=False
     def __init__(self, tId, _name='Person 1', _color=CommonTools.Color.red, _shape=CommonTools.Shape.square):
         super().__init__();
         self.id=tId
@@ -29,19 +30,27 @@ class PeopleItem(QWidget):
         self.txtName.setFrame(False)
         self.bgColor=self.palette().color(QPalette.Background)
         self.txtName.setStyleSheet('background-color: ' + self.bgColor.name())
-        self.txtName.click.connect(self.mouseClick)
+        #self.txtName.click.connect(self.mouseClick)
 
         self.btnMarker=MarkerButton.MarkerButton(self, self.markerShape, self.markerColor)
-        self.btnMarker.setGeometry(QRect(200,2,20,20))
+        self.btnMarker.setGeometry(QRect(175,2,20,20))
         self.btnMarker.clicked.connect(self.markerClicked)
         self.btnMarker.setStyleSheet('background-color: ' + self.bgColor.name()+'; border:none;')
 
         self.btnVisible=QPushButton(self)
         self.btnVisible.setIcon(QIcon(r'Pictures/visible.png'))
         self.btnVisible.clicked.connect(self.visibleClicked)
-        self.btnVisible.setGeometry(225,2,20,20)
+        self.btnVisible.setGeometry(200,2,20,20)
         self.btnVisible.setStyleSheet('background-color: ' + self.bgColor.name()+'; border:none;')
         self.visible=True
+
+        self.btnLight=QPushButton(self)
+        self.btnLight.setIcon(QIcon(r'Pictures/light_normal.png'))
+        self.btnLight.clicked.connect(self.lightClicked)
+        self.btnLight.setGeometry(225,2,20,20)
+        self.btnLight.setStyleSheet('background-color: ' + self.bgColor.name()+'; border:none;')
+        self.lighter=False;
+
 
     def markerClicked(self):
         ms=MarkerSelection.MarkerSelection()
@@ -70,8 +79,18 @@ class PeopleItem(QWidget):
         else:
             self.visible=True
             self.btnVisible.setIcon(QIcon(r'Pictures/visible.png'))
+            
+    def lightClicked(self):
+        if self.lighter:
+            self.lighter=False;
+            self.btnLight.setIcon(QIcon(r'Pictures/light_normal.png'))
+            self.selected=False
+        else:
+            self.lighter=True
+            self.btnLight.setIcon(QIcon(r'Pictures/lighter.png'))
+            self.selected=True
 
-    selected=False
+    
     def mouseClick(self):
         if self.selected:
             self.txtName.setStyleSheet('background-color:'+self.bgColor.name())
