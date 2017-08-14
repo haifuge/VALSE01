@@ -43,7 +43,7 @@ class DateMenu(QWidget):
         lblDateStart.adjustSize()
         lblDateStart.move(20,txtY)
         self.btnDateStart=QPushButton(self)
-        self.btnDateStart.setText('MM/DD/YY')
+        self.btnDateStart.setText('MM/DD/YYYY')
         self.btnDateStart.resize(txtWidth,txtHeight)
         self.btnDateStart.move(txtX,txtY)
 
@@ -53,7 +53,7 @@ class DateMenu(QWidget):
         lblDateEnd.adjustSize()
         lblDateEnd.move(20,txtY)
         self.btnDateEnd=QPushButton(self)
-        self.btnDateEnd.setText('MM/DD/YY')
+        self.btnDateEnd.setText('MM/DD/YYYY')
         self.btnDateEnd.move(txtX,txtY)
         self.btnDateEnd.resize(txtWidth,txtHeight)
 
@@ -202,7 +202,7 @@ class DateMenu(QWidget):
         global_point=self.btnSender.mapToGlobal(point)
         self.ds.setPosition(global_point.x(), global_point.y())
         
-        if self.btnSender.text()!='MM/DD/YY':
+        if self.btnSender.text()!='MM/DD/YYYY':
             self.ds.setDate(self.btnSender.text())
         self.ds.exec_()
     def setbtnText(self, s):

@@ -17,8 +17,8 @@ class DateSelector(QDialog):
         self.setWindowTitle('Calendar')
     def emitDate(self, date):
         self.close()
-        self.signal.emit(date.toString('MM/dd/yy'))
+        self.signal.emit(date.toString('MM/dd/yyyy'))
     def setPosition(self, x,y):
         self.move(x,y)
     def setDate(self, sdate):
-        self.cal.setSelectedDate(QDate.fromString(sdate,'MM/dd/yy'));
+        self.cal.setSelectedDate(QDate.fromString(sdate,'MM/dd/yyyy'));

@@ -5,6 +5,7 @@ from PyQt5.QtGui import *
 from UI.Sidebar import PeopleItem
 
 class PeopleSidebar(QWidget):
+    
     def __init__(self):
         super().__init__()
         self.pItems=[]
@@ -18,9 +19,8 @@ class PeopleSidebar(QWidget):
         self.setGeometry(100,100,250,200)
         self.vlayout=QVBoxLayout()
         self.vlayout.setContentsMargins(QMargins(0,0,0,0))
-        self.vlayout.setSpacing(0)
+        self.vlayout.setSpacing(1)
         
-        self.vlayout.addStretch(1)
         self.setLayout(self.vlayout)
 
     def paintEvent(self, e):
@@ -48,6 +48,7 @@ class PeopleSidebar(QWidget):
             line.setFrameShape(QFrame.HLine)
             line.setFrameShadow(QFrame.Sunken)
             self.vlayout.addWidget(line)
+        self.vlayout.addStretch(1)
 
 if __name__=='__main__':
     app=QApplication(sys.argv)

@@ -95,13 +95,13 @@ class MainWindow(QMainWindow):
         bsql=' {} select d.target_id, d.x, d.y, d.ts from target t, detection d where t.location_id={} and t.target_id=d.target_id and d.ts between {} and {} '
         if self.dateInfo[2][0]==1:
             # date time to long 
-            startDate=QDateTime.fromString(self.dateInfo[0],'MM/dd/yy').addYears(100).toOffsetFromUtc(QDateTime().offsetFromUtc()).toMSecsSinceEpoch()
-            endDate=QDateTime.fromString(self.dateInfo[1],'MM/dd/yy').addYears(100).addDays(1).toOffsetFromUtc(QDateTime().offsetFromUtc()).toMSecsSinceEpoch()
+            startDate=QDateTime.fromString(self.dateInfo[0],'MM/dd/yyyy').toOffsetFromUtc(QDateTime().offsetFromUtc()).toMSecsSinceEpoch()
+            endDate=QDateTime.fromString(self.dateInfo[1],'MM/dd/yyyy').addDays(1).toOffsetFromUtc(QDateTime().offsetFromUtc()).toMSecsSinceEpoch()
             sql=bsql.format('', location_id, str(startDate), str(endDate))
         else:
             # cusomize date
-            startDate=QDate.fromString(self.dateInfo[0],'MM/dd/yy').addYears(100)
-            endDate=QDate.fromString(self.dateInfo[1],'MM/dd/yy').addYears(100).addDays(1)
+            startDate=QDate.fromString(self.dateInfo[0],'MM/dd/yyyy')
+            endDate=QDate.fromString(self.dateInfo[1],'MM/dd/yyyy').addDays(1)
             sql='select target_id, x, y, ts from detection where target_id=-1 '
             if len(self.dateInfo[2])==7 or len(self.dateInfo[2])==31:
                 # weekly, monthly count by day

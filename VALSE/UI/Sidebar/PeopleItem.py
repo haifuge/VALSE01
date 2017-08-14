@@ -8,7 +8,9 @@ from Common import CommonTools
 
 class PeopleItem(QWidget):
     visible=True;
-    selected=False
+    selected=False;
+    # list [changename, value], eg. [light, visible, marker]
+    peopleItemChanged=pyqtSignal(list)
     def __init__(self, tId, _name='Person 1', _color=CommonTools.Color.red, _shape=CommonTools.Shape.square):
         super().__init__();
         self.id=tId
@@ -30,6 +32,7 @@ class PeopleItem(QWidget):
         self.txtName.setFrame(False)
         self.bgColor=self.palette().color(QPalette.Background)
         self.txtName.setStyleSheet('background-color: ' + self.bgColor.name())
+        self.txtName.setBackgroundColor(self.bgColor.name())
         #self.txtName.click.connect(self.mouseClick)
 
         self.btnMarker=MarkerButton.MarkerButton(self, self.markerShape, self.markerColor)
@@ -67,6 +70,8 @@ class PeopleItem(QWidget):
         self.markerShape=markerInfo[1]
         self.btnMarker.SetMarker(self.markerColor, self.markerShape)
 
+        self.peopleItemChanged.emit(['marker',self.markerColor, self.markerShape])
+
     def SetMarker(self, _color, _shape):
         self.markerColor=_color
         self.markerShape=_shape
@@ -79,6 +84,8 @@ class PeopleItem(QWidget):
         else:
             self.visible=True
             self.btnVisible.setIcon(QIcon(r'Pictures/visible.png'))
+
+        self.peopleItemChanged.emit(['visible',self.selected])
             
     def lightClicked(self):
         if self.lighter:
@@ -89,6 +96,8 @@ class PeopleItem(QWidget):
             self.lighter=True
             self.btnLight.setIcon(QIcon(r'Pictures/lighter.png'))
             self.selected=True
+
+        self.peopleItemChanged.emit(['light',self.selected])
 
     
     def mouseClick(self):
@@ -105,19 +114,29 @@ class QtText(QLineEdit):
     def __init__(self, parent=None):
         super().__init__(parent)
         self.setFixedHeight(23)
-        self.setFixedWidth(190)
+        self.setFixedWidth(160)
     def focusOutEvent(self, e):
         self.setReadOnly(True)
+        self.setStyleSheet('background-color: ' +self.bgColor)
+        self.setSelection(0,0)
     def mouseDoubleClickEvent(self, e):
         if self.isReadOnly():
             self.setReadOnly(False)
+            self.setStyleSheet('background-color: white' )
         else:
             self.setReadOnly(True)
+            self.setStyleSheet('background-color: ' +self.bgColor)
+            self.setSelection(0,0)
     def keyPressEvent (self, e):
         if e.key()==Qt.Key_Return:
             self.setReadOnly(True)
+            self.setStyleSheet('background-color: ' +self.bgColor)
+            self.setSelection(0,0)
         else:
             super().keyPressEvent(e)
+
+    def setBackgroundColor(self, color):
+        self.bgColor=color
 
     def mousePressEvent(self, QMouseEvent):
         self.click.emit()
