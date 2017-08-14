@@ -5,7 +5,7 @@ from PyQt5.QtGui import *
 from UI.Sidebar import PeopleItem
 
 class PeopleSidebar(QWidget):
-    
+    peopleItemChanged=pyqtSignal(list)
     def __init__(self):
         super().__init__()
         self.pItems=[]
@@ -36,6 +36,7 @@ class PeopleSidebar(QWidget):
 
         for i in range(len(data)):
             pi=PeopleItem.PeopleItem(data[i][0],data[i][1],data[i][2],data[i][3])
+            pi.itemChanged.connect(self.itemChanged)
             self.pItems.append(pi)
 
         for item in self.pItems:
@@ -49,6 +50,10 @@ class PeopleSidebar(QWidget):
             line.setFrameShadow(QFrame.Sunken)
             self.vlayout.addWidget(line)
         self.vlayout.addStretch(1)
+
+    def itemChanged(self, changes):
+        print(changes)
+        self.peopleItemChanged.emit(changes)
 
 if __name__=='__main__':
     app=QApplication(sys.argv)

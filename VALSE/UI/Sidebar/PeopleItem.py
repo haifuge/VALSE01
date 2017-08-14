@@ -9,8 +9,8 @@ from Common import CommonTools
 class PeopleItem(QWidget):
     visible=True;
     selected=False;
-    # list [changename, value], eg. [light, visible, marker]
-    peopleItemChanged=pyqtSignal(list)
+    # list [id, changename, value], eg. [light, visible, marker]
+    itemChanged=pyqtSignal(list)
     def __init__(self, tId, _name='Person 1', _color=CommonTools.Color.red, _shape=CommonTools.Shape.square):
         super().__init__();
         self.id=tId
@@ -70,7 +70,7 @@ class PeopleItem(QWidget):
         self.markerShape=markerInfo[1]
         self.btnMarker.SetMarker(self.markerColor, self.markerShape)
 
-        self.peopleItemChanged.emit(['marker',self.markerColor, self.markerShape])
+        self.itemChanged.emit([self.id, 'marker',self.markerColor, self.markerShape])
 
     def SetMarker(self, _color, _shape):
         self.markerColor=_color
@@ -85,7 +85,7 @@ class PeopleItem(QWidget):
             self.visible=True
             self.btnVisible.setIcon(QIcon(r'Pictures/visible.png'))
 
-        self.peopleItemChanged.emit(['visible',self.selected])
+        self.itemChanged.emit([self.id, 'visible',self.selected])
             
     def lightClicked(self):
         if self.lighter:
@@ -97,7 +97,7 @@ class PeopleItem(QWidget):
             self.btnLight.setIcon(QIcon(r'Pictures/lighter.png'))
             self.selected=True
 
-        self.peopleItemChanged.emit(['light',self.selected])
+        self.itemChanged.emit([self.id, 'light',self.selected])
 
     
     def mouseClick(self):
