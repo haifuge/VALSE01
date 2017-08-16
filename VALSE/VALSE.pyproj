@@ -29,9 +29,6 @@
       <SubType>Code</SubType>
     </Compile>
     <Compile Include="DataEntity.py" />
-    <Compile Include="module2.py">
-      <SubType>Code</SubType>
-    </Compile>
     <Compile Include="UI\DateMenu\CustomFrequencyPanel.py">
       <SubType>Code</SubType>
     </Compile>

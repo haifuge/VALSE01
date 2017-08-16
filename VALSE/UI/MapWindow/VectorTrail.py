@@ -9,7 +9,7 @@ from UI.Object import Marker
 class VectorTrail(QWidget):
     max_x=300.0
     max_y=300.0
-    width=400.0
+    width=600.0
     height=400.0
     x_ratio=1.0
     y_ratio=1.0
@@ -48,6 +48,11 @@ class VectorTrail(QWidget):
         self.lmap.setScaledContents(True)
         self.lmap.resize(self.width,self.height)
         self.lmap.move(0,0)
+
+    def SetSize(self, _width, _height):
+        self.width=_width
+        self.height=_height;
+        self.resize(self.width,self.height)
         
     def resizeEvent(self, e):
         self.lmap.resize(self.size())

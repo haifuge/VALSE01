@@ -5,12 +5,13 @@ from PyQt5.QtGui import *
 class EventGrid(QWidget):
     cWidth=30
     gridstep=0
-    def __init__(self):
+    def __init__(self, _data=[]):
         super().__init__()
+        self.data=_data
         self.initUI()
 
     def initUI(self):
-        self.eventNum=4
+        self.eventNum=len(self.data)
         self.rowHeight=50
         self.rowWidth=self.size().width()
         self.setMinimumHeight(120)

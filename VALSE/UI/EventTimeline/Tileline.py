@@ -75,6 +75,7 @@ class Tileline(QWidget):
         self.leftbtn.setToolTip(CommonMethod.Second2Time(self.startTime))
         
         self.repaint()
+
     def rightbtnMove(self):
         if self.rightbtn.x()>self.timelineStep*25:
             self.endTime=24.0*3600
@@ -89,6 +90,7 @@ class Tileline(QWidget):
         self.rightbtn.setToolTip(CommonMethod.Second2Time(self.endTime))
         
         self.repaint()
+
     def getTimePeriodRange(self):
         return (self.startTime, self.endTime)
 
@@ -129,14 +131,5 @@ class Tileline(QWidget):
             else:
                 qp.drawLine(self.timelineStep * (i) + self.start_x, timeline_y, self.timelineStep * (i) + self.start_x,
                             timeline_y + 4)
-
-    def drawMarks(self,qp):
-        qp.setPen(QPen(Color.red,2,Qt.SolidLine))
-        qp.drawEllipse(10,10,10,10)
-        qp.drawRect(20,20,10,10)
-        qp.drawLine(50,50,60,60)
-        qp.drawLine(50,60,60,50)
-        points=QPolygon([QPoint(75,70),QPoint(70,80),QPoint(80,80)])
-        qp.drawPolygon(points)
 
 

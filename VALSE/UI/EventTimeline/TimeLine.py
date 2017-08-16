@@ -7,8 +7,9 @@ from UI.EventTimeline import GridArea
 from UI.EventTimeline import Tileline
 
 class TimeLine(QWidget):
-    def __init__(self):
+    def __init__(self, _data=[]):
         super().__init__()
+        self.data=_data
         self.initUI()
     def initUI(self):
         self.setMinimumSize(500,270)
@@ -17,17 +18,18 @@ class TimeLine(QWidget):
         self.tab.move(0,0)
         self.tab.size().width=self.size().width()
         self.tab.size().height=self.size().height()
-        verfiedTab=VerifiedTab()
+        verfiedTab=VerifiedTab(self.data)
         self.tab.addTab(verfiedTab,"Verified")
-        unverifiedTab=VerifiedTab()
+        unverifiedTab=VerifiedTab(self.data)
         self.tab.addTab(unverifiedTab,"Unverified")
 
     def resizeEvent(self, e):
         self.tab.resize(e.size()+QSize(1,1))
 
 class VerifiedTab(QWidget):
-    def __init__(self):
+    def __init__(self, _data=[]):
         super().__init__()
+        self.data=_data
         self.initUI()
 
     def initUI(self):
@@ -68,7 +70,7 @@ class VerifiedTab(QWidget):
         self.vlb.setSpacing(0)
         self.vlb.setContentsMargins(QMargins(0,0,0,0))
         self.vlb.addLayout(self.hlb)
-        self.grid=GridArea.GridArea()
+        self.grid=GridArea.GridArea(self.data)
         self.grid.setGeometry(0,0,self.size().width(),self.size().height() - 15)
         self.vlb.addWidget(self.grid)
 
@@ -86,6 +88,7 @@ class VerifiedTab(QWidget):
         #qp.begin(self)
         #qp.drawRect(QRect(e.rect()))
         #qp.end()
+
     def timerTick(self):
         pass
     def playbtnClicked(self):
@@ -112,7 +115,9 @@ class VerifiedTab(QWidget):
         self.startTime=value[0]
         self.endTime=value[1]
         self.grid.setTimeRange(self.startTime, self.endTime)
-
+        
+    def SetData(self, data):
+        pass
 
 if __name__=='__main__':
     app=QApplication(sys.argv)

@@ -19,13 +19,14 @@ class GridArea(QWidget):
     columndWidth=0
     # tag for initializing left and right button position
     initialPosition=True
-    def __init__(self):
+    def __init__(self, _data):
         super().__init__()
+        self.data=_data
         self.initUI()
 
     def initUI(self):
         self.setContentsMargins(QMargins(0,0,0,0))
-        self.widget=EventGrid.EventGrid()
+        self.widget=EventGrid.EventGrid(self.data)
         #self.widget.setGeometry(0,0,self.size().width(), self.widget.eventNum*self.widget.rowHeight)
         scroll=QScrollArea()
         scroll.setVerticalScrollBarPolicy(Qt.ScrollBarAlwaysOn)
