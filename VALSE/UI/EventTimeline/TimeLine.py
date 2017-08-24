@@ -83,7 +83,7 @@ class VerifiedTab(QWidget):
 
     def paintEvent(self, e):
         pass
-        #qp=QPainter()
+        #qp=QPainter()z
         #qp.setPen(Qt.red)
         #qp.begin(self)
         #qp.drawRect(QRect(e.rect()))
@@ -116,8 +116,8 @@ class VerifiedTab(QWidget):
         self.endTime=value[1]
         self.grid.setTimeRange(self.startTime, self.endTime)
         
-    def SetData(self, data):
-        pass
+    def SetData(self, _data):
+        self.data=_data
 
 if __name__=='__main__':
     app=QApplication(sys.argv)

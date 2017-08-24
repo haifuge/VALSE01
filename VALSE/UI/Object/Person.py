@@ -1,9 +1,12 @@
 from UI.Object import Marker
 from Common import CommonTools
+import copy
 
 class Person:
     name=''
+    #[x, y, time]
     data=[]
+    markers=[]
     id=0
     def __init__(self, _id, _name, _color, _shape):
         self.id=_id
@@ -19,3 +22,7 @@ class Person:
 
     def SetName(self, _name):
         self.name=_name
+
+    def initMarkers(self):
+        for i in data:
+            markers.append(copy.deepcopy(self.marker))

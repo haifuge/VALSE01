@@ -158,6 +158,8 @@ class MainWindow(QMainWindow):
         #mapWindow.resize(500,300)
         mapContent=VectorTrail.VectorTrail()
         mapContent.SetMap(self.mapInfo[0][1], self.mapInfo[0][2], self.mapInfo[0][3])
+        mapContent.SetData(personsData)
+        mapContent.drawMarkers()
         #mapContent.SetSize(500,300);
         mapWindow.setWidget(mapContent)
         mapWindow.setWindowFlags(Qt.Window|Qt.WindowTitleHint|Qt.CustomizeWindowHint)
@@ -182,7 +184,7 @@ class MainWindow(QMainWindow):
         # [target_id, x, y, timestamp]
         # sidebar data [id, name, color, shape], id to identify whose name has been changed, that equals to k of personsData[0].name('Person'+k)
         persons=[]
-        # map data [id, name, color, shape, [x, y, time ... ]]
+        # map data [(id, name, color, shape, [x, y, time ... ]), ...]
         personsData=[]
         dId=-1
         k=1

@@ -5,6 +5,7 @@ from PyQt5.QtGui import *
 from Common import CommonMethod
 from Common import CommonTools
 from UI.Object import Marker
+import copy
 
 class VectorTrail(QWidget):
     max_x=300.0
@@ -45,6 +46,9 @@ class VectorTrail(QWidget):
         self.y_ratio=self.max_y/self.height
         
         self.lmap.setImage('Maps/'+map_path);
+        print(self.lmap.imgHeight, self.lmap.imgWidth)
+        self.x_ratio=self.lmap.imgWidth/self.max_x
+        self.y_ratio=self.lmap.imgHeight/self.max_y
         self.lmap.setScaledContents(True)
         self.lmap.resize(self.width,self.height)
         self.lmap.move(0,0)
@@ -56,6 +60,8 @@ class VectorTrail(QWidget):
         
     def resizeEvent(self, e):
         self.lmap.resize(self.size())
+        self.x_ratio=self.lmap.imgWidth/self.max_x
+        self.y_ratio=self.lmap.imgHeight/self.max_y
 
     def initTimer(self):
         self.timer=QTimer()
@@ -74,7 +80,16 @@ class VectorTrail(QWidget):
             self.timer.stop()
             self.setFixedSize(QWIDGETSIZE_MAX, QWIDGETSIZE_MAX)
 
+    def SetData(self, _data):
+        self.data=_data
 
+    def drawMarkers(self):
+        for p in self.data:
+            for d in p.data:
+                # copy.deepcopy(p.marker)
+                marker=Marker.Marker(p.color, p.shape,10,10,12,self)
+                marker.move(d[0]*self.x_ratio,d[1]*self.y_ratio)
+                p.markers.append(marker)
 
 class Map(QLabel):
 
@@ -87,8 +102,8 @@ class Map(QLabel):
 
     def setImage(self, path):
         self.img=QPixmap(path)
-        self.imgWidth=self.img.size().width
-        self.imgHeight=self.img.size().height
+        self.imgWidth=self.img.size().width()
+        self.imgHeight=self.img.size().height()
 
     def setData(self, arr):
         self.positions=arr;
