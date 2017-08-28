@@ -85,28 +85,18 @@ class PeopleItem(QWidget):
             self.visible=True
             self.btnVisible.setIcon(QIcon(r'Pictures/visible.png'))
 
-        self.itemChanged.emit([self.id, 'visible',self.selected])
+        self.itemChanged.emit([self.id, 'visible',self.visible])
             
     def lightClicked(self):
         if self.lighter:
             self.lighter=False;
             self.btnLight.setIcon(QIcon(r'Pictures/light_normal.png'))
-            self.selected=False
         else:
             self.lighter=True
             self.btnLight.setIcon(QIcon(r'Pictures/lighter.png'))
-            self.selected=True
 
-        self.itemChanged.emit([self.id, 'light',self.selected])
+        self.itemChanged.emit([self.id, 'light',self.lighter])
 
-    
-    def mouseClick(self):
-        if self.selected:
-            self.txtName.setStyleSheet('background-color:'+self.bgColor.name())
-            self.selected=False
-        else:
-            self.txtName.setStyleSheet('background-color:#778899')
-            self.selected=True
 
 
 class QtText(QLineEdit):

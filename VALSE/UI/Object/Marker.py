@@ -31,6 +31,7 @@ class Marker(QWidget):
     def SetMarker(self, _color, _shape):
         self.color=_color
         self.shape=_shape
+        self.repaint()
     def setPositionTip(self, tip):
         QToolTip.setFont(QFont('SansSerif',10))
         toolTip=tip

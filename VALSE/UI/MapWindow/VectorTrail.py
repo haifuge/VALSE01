@@ -30,23 +30,25 @@ class VectorTrail(QWidget):
         self.lmap.resize(self.width,self.height)
         self.lmap.move(0,0)
 
-        marker=Marker.Marker(CommonTools.Color.red, CommonTools.Shape.circle, 10,10, 10, self)
-        marker.move(100,100)
-        marker.setVisible(True)
-        marker.setPositionTip('100, 100')
+        # test for visible and highlight marker
+        #marker=Marker.Marker(CommonTools.Color.red, CommonTools.Shape.circle, 10,10, 10, self)
+        #marker.move(100,100)
+        #marker.setVisible(True)
+        #marker.setPositionTip('100, 100')
+        #marker.setBold(2)
+        #marker.setBold(1)
 
-        marker3=Marker.Marker(CommonTools.Color.green, CommonTools.Shape.circle,10,10,10,self)
-        marker3.move(150,100)
-        marker3.setVisible(True)
-        marker3.setPositionTip('150, 100')
+        #marker3=Marker.Marker(CommonTools.Color.green, CommonTools.Shape.circle,10,10,10,self)
+        #marker3.move(150,100)
+        #marker3.setVisible(True)
+        #marker3.setPositionTip('150, 100')
 
-        marker2=Marker.Marker(CommonTools.Color.blue, CommonTools.Shape.circle,10,10,10,self)
-        marker2.move(200,100)
-        marker2.setVisible(True)
-        marker2.setPositionTip('200, 100')
+        #marker2=Marker.Marker(CommonTools.Color.blue, CommonTools.Shape.circle,10,10,10,self)
+        #marker2.move(200,100)
+        #marker2.setVisible(True)
+        #marker2.setPositionTip('200, 100')
 
-        marker.setBold(2)
-        marker.setBold(1)
+        #end test
 
     def SetMap(self,  maxx, maxy, map_path):
         self.max_x=maxx
@@ -99,6 +101,22 @@ class VectorTrail(QWidget):
                 marker=Marker.Marker(p.color, p.shape,10,10,12,self)
                 marker.move(d[0]*self.x_ratio,d[1]*self.y_ratio)
                 p.markers.append(marker)
+    def changeMarker(self, changes):
+        if changes[1]=='marker':
+            for p in self.data:
+                if changes[0]==p.id:
+                    for m in p.markers:
+                        m.SetMarker(changes[2], changes[3])
+        elif changes[1]=='visible':
+            for p in self.data:
+                if changes[0]==p.id:
+                    for m in p.markers:
+                        m.setVisible(changes[2])
+        elif changes[1]=='light':
+            for p in self.data:
+                if changes[0]==p.id:
+                    for m in p.markers:
+                        m.setBold(2 if changes[2] else 1)
 
 class Map(QLabel):
 

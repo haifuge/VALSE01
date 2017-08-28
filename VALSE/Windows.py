@@ -156,20 +156,20 @@ class MainWindow(QMainWindow):
         # show map
         mapWindow=QMdiSubWindow()
         #mapWindow.resize(500,300)
-        mapContent=VectorTrail.VectorTrail()
-        mapContent.SetMap(self.mapInfo[0][1], self.mapInfo[0][2], self.mapInfo[0][3])
-        mapContent.SetData(personsData)
-        #mapContent.drawMarkers()
+        self.mapContent=VectorTrail.VectorTrail()
+        self.mapContent.SetMap(self.mapInfo[0][1], self.mapInfo[0][2], self.mapInfo[0][3])
+        self.mapContent.SetData(personsData)
+        self.mapContent.drawMarkers()
         #mapContent.SetSize(500,300);
-        mapWindow.setWidget(mapContent)
+        mapWindow.setWidget(self.mapContent)
         mapWindow.setWindowFlags(Qt.Window|Qt.WindowTitleHint|Qt.CustomizeWindowHint)
         self.mdi.addSubWindow(mapWindow)
         mapWindow.show()
 
         # show timeline
         sub=QMdiSubWindow()
-        timeline=TimeLine.TimeLine(personsData)
-        sub.setWidget(timeline)
+        self.timeline=TimeLine.TimeLine(personsData)
+        sub.setWidget(self.timeline)
         sub.setWindowTitle("TimeLine")
         self.mdi.addSubWindow(sub)
         sub.show()
@@ -177,7 +177,10 @@ class MainWindow(QMainWindow):
     def sidebarItemChanged(self, changes):
         #[id, changename, value]
         print(changes)
-        pass
+        self.mapContent.changeMarker(changes)
+        self.timeline.changeMarker(changes)
+        
+        
 
     # convert data[] to object[] (Person[])
     def processData(self, data):
