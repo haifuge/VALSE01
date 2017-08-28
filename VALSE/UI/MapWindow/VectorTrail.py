@@ -30,14 +30,23 @@ class VectorTrail(QWidget):
         self.lmap.resize(self.width,self.height)
         self.lmap.move(0,0)
 
-        #marker=Marker.Marker(CommonTools.Color.red, CommonTools.Shape.square, 10,10, 16, self)
-        #marker.move(100,100)
+        marker=Marker.Marker(CommonTools.Color.red, CommonTools.Shape.circle, 10,10, 10, self)
+        marker.move(100,100)
+        marker.setVisible(True)
+        marker.setPositionTip('100, 100')
 
-        #marker2=Marker.Marker(CommonTools.Color.blue, CommonTools.Shape.cross,10,10,12,self)
-        #marker2.move(200,100)
+        marker3=Marker.Marker(CommonTools.Color.green, CommonTools.Shape.circle,10,10,10,self)
+        marker3.move(150,100)
+        marker3.setVisible(True)
+        marker3.setPositionTip('150, 100')
 
-        #marker3=Marker.Marker(CommonTools.Color.green, CommonTools.Shape.triangle,10,10,22,self)
-        #marker3.move(150,100)
+        marker2=Marker.Marker(CommonTools.Color.blue, CommonTools.Shape.circle,10,10,10,self)
+        marker2.move(200,100)
+        marker2.setVisible(True)
+        marker2.setPositionTip('200, 100')
+
+        marker.setBold(2)
+        marker.setBold(1)
 
     def SetMap(self,  maxx, maxy, map_path):
         self.max_x=maxx

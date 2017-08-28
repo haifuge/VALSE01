@@ -159,7 +159,7 @@ class MainWindow(QMainWindow):
         mapContent=VectorTrail.VectorTrail()
         mapContent.SetMap(self.mapInfo[0][1], self.mapInfo[0][2], self.mapInfo[0][3])
         mapContent.SetData(personsData)
-        mapContent.drawMarkers()
+        #mapContent.drawMarkers()
         #mapContent.SetSize(500,300);
         mapWindow.setWidget(mapContent)
         mapWindow.setWindowFlags(Qt.Window|Qt.WindowTitleHint|Qt.CustomizeWindowHint)

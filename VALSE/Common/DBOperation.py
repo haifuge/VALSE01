@@ -4,11 +4,10 @@ class DBOperator():
     
     # sql: query string, n: number of columns in query string
     def ExecSql(self, sql, n):
-        self.conn=pypyodbc.connect("Driver={SQL Server};"
-                      "Server=108.52.45.69,1434;"
-                      "Database=test;"
-                      "uid=sa;"
-                      "pwd=64212917@Asiankitchen")
+        self.conn=pypyodbc.connect("Driver={SQL Server Native Client 11.0};"
+                      "Server=localhost;"
+                      "Database=VALSE;"
+                      "Trusted_Connection=yes;")
         cursor=self.conn.cursor()
         #comm=("select * from Customers")
         comm=(sql)
@@ -24,6 +23,7 @@ class DBOperator():
             results=cursor.fetchone()
         self.conn.close()
         return dataset
+
 
 
 #  mapId, personId, eventId, map_x, map_y, date_time, map_url
