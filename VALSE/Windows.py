@@ -179,8 +179,6 @@ class MainWindow(QMainWindow):
         print(changes)
         self.mapContent.changeMarker(changes)
         self.timeline.changeMarker(changes)
-        
-        
 
     # convert data[] to object[] (Person[])
     def processData(self, data):
