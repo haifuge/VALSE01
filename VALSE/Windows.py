@@ -193,6 +193,7 @@ class MainWindow(QMainWindow):
             if dId!=data[i][0]:
                 dId=data[i][0]
                 p=Person.Person(dId, 'Person'+str(k), CommonTools.marks[k][0], CommonTools.marks[k][1])
+                p.data=[]
                 p.data.append([data[i][1], data[i][2], data[i][3]])
                 personsData.append(p)
                 persons.append([dId, 'Person'+str(k), CommonTools.marks[k][0], CommonTools.marks[k][1]])
