@@ -24,5 +24,5 @@ class Person:
         self.name=_name
 
     def initMarkers(self):
-        for i in data:
-            markers.append(copy.deepcopy(self.marker))
+        for i in self.data:
+            self.markers.append(copy.deepcopy(self.marker))

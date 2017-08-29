@@ -83,7 +83,7 @@ class VerifiedTab(QWidget):
 
     def paintEvent(self, e):
         pass
-        #qp=QPainter()z
+        #qp=QPainter()
         #qp.setPen(Qt.red)
         #qp.begin(self)
         #qp.drawRect(QRect(e.rect()))
@@ -121,7 +121,7 @@ class VerifiedTab(QWidget):
 
 if __name__=='__main__':
     app=QApplication(sys.argv)
-    ex=TimeLine()
+    ex=TimeLine([1,2,3])
     #ex=GridArea()
     #ex=EventGrid()
     # ex=TestDragButton()

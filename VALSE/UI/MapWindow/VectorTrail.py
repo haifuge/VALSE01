@@ -96,6 +96,7 @@ class VectorTrail(QWidget):
 
     def drawMarkers(self):
         for p in self.data:
+            p.markers=[]
             for d in p.data:
                 # copy.deepcopy(p.marker)
                 marker=Marker.Marker(p.color, p.shape,10,10,12,self)
@@ -122,7 +123,6 @@ class Map(QLabel):
 
     def __init__(self, parent=None):
         super().__init__(parent);
-        
         
     def setMapInfo(self, _mapData):
         self.mapData=_mapData;

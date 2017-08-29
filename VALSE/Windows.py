@@ -176,9 +176,8 @@ class MainWindow(QMainWindow):
 
     def sidebarItemChanged(self, changes):
         #[id, changename, value]
-        print(changes)
         self.mapContent.changeMarker(changes)
-        self.timeline.changeMarker(changes)
+        #self.timeline.changeMarker(changes)
 
     # convert data[] to object[] (Person[])
     def processData(self, data):
