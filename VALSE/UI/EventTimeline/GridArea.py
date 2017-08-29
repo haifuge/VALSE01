@@ -4,6 +4,7 @@ from PyQt5.QtGui import *
 from UI.EventTimeline import EventGrid
 from UI.EventTimeline import DragButton
 from Common import CommonMethod
+from UI.EventTimeline import VerticalLine
 
 class GridArea(QWidget):
     # grid time range
@@ -39,6 +40,11 @@ class GridArea(QWidget):
         vlayout.addWidget(scroll)
         self.setLayout(vlayout)
 
+        # verticle line moves as time goes from left btn to right btn.
+        self.vline=VerticalLine.VerticalLine(2,self.size().height(),self)
+        self.vline.move(20,0)
+        self.vline.setVisible(False)
+
         self.leftbtn=DragButton.DragButton("|", self)
         self.leftbtn.resize(10, 30)
 
@@ -52,8 +58,29 @@ class GridArea(QWidget):
         self.leftbtn.mouseMoveSignal.connect(self.leftbtnMove)
         self.rightbtn.mouseMoveSignal.connect(self.rightbtnMove)
 
+    # move verticle line right 1 unit
+    # return False indicates reaching right btn, hide line, and stop timer; 
+    #rerturn True indicates not reaching right btn and keep moving;
+    moving=False
+    def moveVLine(self):
+        if self.moving:
+            xpos=self.vline.x()+1
+            if xpos<self.rightbtn.x():
+                self.vline.move(xpos,0)
+            else:
+                self.vline.setVisible(False)
+                self.moving = False
+        else:
+            self.vline.move(self.leftbtn.x()+self.leftbtn.size().width()-1,0)
+            self.moving = True
+        return self.moving
+
+
     resizetimes=0
     def resizeEvent(self, QResizeEvent):
+
+        self.vline.setHeight(self.size().height())
+
         gridwidth=self.size().width()-25
         self.widget.setGeometry(0, 0, gridwidth, self.widget.eventNum * self.widget.rowHeight)
         # set leftbtn and rightbtn position and moving range

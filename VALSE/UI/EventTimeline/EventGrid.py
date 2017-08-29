@@ -15,7 +15,7 @@ class EventGrid(QWidget):
         self.rowHeight=50
         self.rowWidth=self.size().width()
         self.setMinimumHeight(120)
-
+        
     def paintEvent(self, e):
         qp=QPainter()
         qp.begin(self)

@@ -44,6 +44,7 @@ class VerifiedTab(QWidget):
         palette=self.palette()
         palette.setColor(self.backgroundRole(), Qt.white)
         self.setPalette(palette)
+        
         self.hlb=QHBoxLayout()
         self.hlb.setSizeConstraint(QLayout.SetFixedSize)
         self.hlb.setContentsMargins(QMargins(5,5,0,5))

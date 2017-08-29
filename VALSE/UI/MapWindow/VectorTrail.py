@@ -102,6 +102,7 @@ class VectorTrail(QWidget):
                 marker=Marker.Marker(p.color, p.shape,10,10,12,self)
                 marker.move(d[0]*self.x_ratio,d[1]*self.y_ratio)
                 p.markers.append(marker)
+
     def changeMarker(self, changes):
         if changes[1]=='marker':
             for p in self.data:
