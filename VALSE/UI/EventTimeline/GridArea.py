@@ -7,6 +7,7 @@ from Common import CommonMethod
 from UI.EventTimeline import VerticalLine
 
 class GridArea(QWidget):
+    startTimeChanged=pyqtSignal(int)
     # grid time range
     timeRangeMin=0
     timeRangeMax=24*3600
@@ -14,7 +15,7 @@ class GridArea(QWidget):
     # grid start time and end time
     startTime=0
     endTime=0
-    # grid left blank width
+    # grid left blank width.
     lbWidth=0
     # grid column width
     columndWidth=0
@@ -60,9 +61,10 @@ class GridArea(QWidget):
 
     # move verticle line right 1 unit
     # return False indicates reaching right btn, hide line, and stop timer; 
-    #rerturn True indicates not reaching right btn and keep moving;
+    # rerturn True indicates not reaching right btn and keep moving;
     moving=False
     def moveVLine(self):
+        xpos=0
         if self.moving:
             xpos=self.vline.x()+1
             if xpos<self.rightbtn.x():
@@ -71,10 +73,20 @@ class GridArea(QWidget):
                 self.vline.setVisible(False)
                 self.moving = False
         else:
+            xpos=self.leftbtn.x()+self.leftbtn.size().width()-1
+            self.vline.setVisible(True)
             self.vline.move(self.leftbtn.x()+self.leftbtn.size().width()-1,0)
             self.moving = True
-        return self.moving
+        self.columndWidth=self.widget.getgridstep()
+        x=(xpos-self.lbWidth)*self.timeRange/(10*self.columndWidth) 
+        # change time to seconds
+        vlineTime=int(x)+self.timeRangeMin
+        return [self.moving, vlineTime]
 
+    def resetVLine(self):
+        self.vline.setVisible(False)
+        self.vline.move(self.leftbtn.x()+self.leftbtn.size().width()-1,0)
+        self.moving=False
 
     resizetimes=0
     def resizeEvent(self, QResizeEvent):
@@ -117,11 +129,15 @@ class GridArea(QWidget):
         
     def leftbtnRelease(self):
         self.leftbtnXPosRatio = (self.leftbtn.x()+self.leftbtn.size().width()-self.lbWidth) / (self.size().width()-25-self.lbWidth-15)
+        # as start time of grid changes, main window need to know when is start time so that it won't show markers before start time
+        self.startTimeChanged.emit(self.startTime)
 
     def rightbtnRelease(self):
         self.rightbtnXPosRatio=(self.rightbtn.x()-self.lbWidth)/(self.size().width()-25-self.lbWidth-15)
         
     def leftbtnMove(self):
+        self.vline.setVisible(False)
+        self.moving = False
         self.widget.setLeftLineXPos(self.leftbtn.x()+self.leftbtn.size().width()-2)
         # show time as btn moves
         point=self.leftbtn.rect().topRight()
@@ -140,6 +156,8 @@ class GridArea(QWidget):
         self.widget.repaint()
         
     def rightbtnMove(self):
+        self.vline.setVisible(False)
+        self.moving = False
         self.widget.setRightLineXPos(self.rightbtn.x()+0.5)
         # show time as btn moves
         point=self.rightbtn.rect().topRight()
@@ -157,7 +175,8 @@ class GridArea(QWidget):
         self.rightbtn.setToolTip(CommonMethod.Second2Time(self.endTime))
 
         self.widget.repaint()
-        
+    
+    # sTime, eTime are second as type of int.
     def setTimeRange(self, sTime, eTime):
         self.timeRangeMin=sTime
         self.timeRangeMax=eTime

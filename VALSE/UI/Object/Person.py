@@ -8,6 +8,7 @@ class Person:
     data=[]
     markers=[]
     id=0
+    index=0
     def __init__(self, _id, _name, _color, _shape):
         self.id=_id
         self.name=_name
@@ -15,7 +16,7 @@ class Person:
         self.shape=_shape
         self.marker=Marker.Marker(self.color, self.shape)
 
-    def SetMarker(self,_color, _shape):
+    def SetMarker(self,_color, _shape): 
         self.color=_color
         self.shape=_shape
         self.marker=Marker.Marker(self.color, self.shape)

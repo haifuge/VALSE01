@@ -92,12 +92,12 @@ class MainWindow(QMainWindow):
         self.mapInfo=dbop.ExecSql('select location_id, max_x, max_y, map_url from location where name=\''+self.dateInfo[3]+'\';',4)
         location_id=str(self.mapInfo[0][0])
         sql=''
-        bsql=' {} select d.target_id, d.x, d.y, d.ts from target t, detection d where t.location_id={} and t.target_id=d.target_id and d.ts between {} and {} '
+        bsql=' {} select d.target_id, d.x, d.y, d.ts-{} from target t, detection d where t.location_id={} and t.target_id=d.target_id and d.ts between {} and {} '
         if self.dateInfo[2][0]==1:
             # date time to long 
             startDate=QDateTime.fromString(self.dateInfo[0],'MM/dd/yyyy').toOffsetFromUtc(QDateTime().offsetFromUtc()).toMSecsSinceEpoch()
             endDate=QDateTime.fromString(self.dateInfo[1],'MM/dd/yyyy').addDays(1).toOffsetFromUtc(QDateTime().offsetFromUtc()).toMSecsSinceEpoch()
-            sql=bsql.format('', location_id, str(startDate), str(endDate))
+            sql=bsql.format('', str(startDate), location_id, str(startDate), str(endDate))
         else:
             # cusomize date
             startDate=QDate.fromString(self.dateInfo[0],'MM/dd/yyyy')
@@ -110,7 +110,7 @@ class MainWindow(QMainWindow):
                     if self.dateInfo[2][t.dayOfWeek()-1]!=0:
                         sDate=QDateTime(t).toOffsetFromUtc(QDateTime().offsetFromUtc()).toMSecsSinceEpoch()
                         eDate=QDateTime(t.addDays(1)).toOffsetFromUtc(QDateTime().offsetFromUtc()).toMSecsSinceEpoch()
-                        sql+=bsql.format(' union all ', location_id, str(startDate), str(endDate))
+                        sql+=bsql.format(' union all ', str(startDate), location_id, str(startDate), str(endDate))
                     t=t.addDays(1)
                 
             elif len(self.dateInfo[2])==12:
@@ -121,7 +121,7 @@ class MainWindow(QMainWindow):
                         eDate=QDateTime(startDate.year(), startDate.month()+1, 1, 0,0).toOffsetFromUtc(QDateTime().offsetFromUtc()).toMSecsSinceEpoch()
                         if eDate>endDate.toOffsetFromUtc(QDateTime().offsetFromUtc()).toMSecsSinceEpoch():
                             eDate=endDate.toOffsetFromUtc(QDateTime().offsetFromUtc()).toMSecsSinceEpoch()
-                        sql+=bsql.format(' union all ', location_id, str(startDate), str(endDate))
+                        sql+=bsql.format(' union all ', str(startDate), location_id, str(startDate), str(endDate))
                 t=startDate.addMonths(1)
                 t=QDate(t.year(), t.month(), t.day())
                 while t<endDate:
@@ -130,13 +130,13 @@ class MainWindow(QMainWindow):
                     if self.dateInfo[2][t.month()-1]!=0:
                         sDate=QDateTime(t).toOffsetFromUtc(QDateTime().offsetFromUtc()).toMSecsSinceEpoch()
                         eDate=QDateTime(t.year, startDate.month+1, 1, 0,0).toOffsetFromUtc(QDateTime().offsetFromUtc()).toMSecsSinceEpoch()
-                        sql+=bsql.format(' union all ', location_id, str(startDate), str(endDate))
+                        sql+=bsql.format(' union all ', str(startDate), location_id, str(startDate), str(endDate))
                     t=t.addMonths(1)
                 # deal with last month of date period
                 if self.dateInfo[2][t.month()-1]!=0:
                     sDate=QDateTime(t).toOffsetFromUtc(QDateTime().offsetFromUtc()).toMSecsSinceEpoch()
                     eDate=QDateTime(endDate).toOffsetFromUtc(QDateTime().offsetFromUtc()).toMSecsSinceEpoch()
-                    sql+=bsql.format(' union all ', location_id, str(startDate), str(endDate))
+                    sql+=bsql.format(' union all ', str(startDate), location_id, str(startDate), str(endDate))
         self.objInfo=dbop.ExecSql(sql, 4)
         # [target_id, x, y, timestamp]
         #print(self.objInfo)
@@ -169,10 +169,23 @@ class MainWindow(QMainWindow):
         # show timeline
         sub=QMdiSubWindow()
         self.timeline=TimeLine.TimeLine(personsData)
+        self.timeline.timeSignal.connect(self.showingMarkers)
+        self.timeline.startTimeChanged.connect(self.startTimeChanged)
+        self.timeline.resetSignal.connect(self.resetMap)
         sub.setWidget(self.timeline)
         sub.setWindowTitle("TimeLine")
         self.mdi.addSubWindow(sub)
         sub.show()
+
+    def showingMarkers(self, timeStamp):
+        self.mapContent.showMarkers(timeStamp)
+        #print(timeStamp)
+    def startTimeChanged(self, sTime):
+        self.mapContent.setStartTime(sTime)
+        print(sTime)
+
+    def resetMap(self):
+        self.mapContent.hideAllMarkers() 
 
     def sidebarItemChanged(self, changes):
         #[id, changename, value]

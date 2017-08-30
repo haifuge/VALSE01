@@ -101,6 +101,8 @@ class VectorTrail(QWidget):
                 # copy.deepcopy(p.marker)
                 marker=Marker.Marker(p.color, p.shape,10,10,12,self)
                 marker.move(d[0]*self.x_ratio,d[1]*self.y_ratio)
+                marker.setVisible(False)
+                marker.timeStamp=d[2]
                 p.markers.append(marker)
 
     def changeMarker(self, changes):
@@ -119,6 +121,27 @@ class VectorTrail(QWidget):
                 if changes[0]==p.id:
                     for m in p.markers:
                         m.setBold(2 if changes[2] else 1)
+    def setStartTime(self, sTime):
+        self.startTime=sTime
+        for p in self.data:
+            for i in range(len(p.markers)):
+                if self.startTime>p.markers[i].timeStamp:
+                    p.index=i-1;
+                    break;
+    # show markers from current index to time
+    # index is 0 default, or number of last shown marker
+    def showMarkers(self, time):
+        for p in self.data:
+            for i in range(p.index, len(p.markers)):
+                if time>=int(p.markers[i].timeStamp):
+                    p.markers[i].setVisible(True)
+                else:
+                    p.index=i
+                    break
+    def hideAllMarkers(self):
+        for p in self.data:
+            for m in p.markers:
+                m.setVisible(False)
 
 class Map(QLabel):
 

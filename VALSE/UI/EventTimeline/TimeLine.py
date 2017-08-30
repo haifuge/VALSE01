@@ -5,8 +5,12 @@ from PyQt5.QtCore import *
 from PyQt5.QtGui import *
 from UI.EventTimeline import GridArea
 from UI.EventTimeline import Tileline
+from Common import CommonMethod
 
 class TimeLine(QWidget):
+    timeSignal=pyqtSignal(int)
+    startTimeChanged=pyqtSignal(int)
+    resetSignal=pyqtSignal()
     def __init__(self, _data=[]):
         super().__init__()
         self.data=_data
@@ -20,21 +24,36 @@ class TimeLine(QWidget):
         self.tab.size().height=self.size().height()
         verfiedTab=VerifiedTab(self.data)
         self.tab.addTab(verfiedTab,"Verified")
-        unverifiedTab=VerifiedTab(self.data)
-        self.tab.addTab(unverifiedTab,"Unverified")
+        verfiedTab.timeSignal.connect(self.timeSignalChanging)
+        verfiedTab.startTimeChanged.connect(self.onStartTimeChanged)
+        verfiedTab.resetSignal.connect(self.onResetSignal) 
+        #unverifiedTab=VerifiedTab(self.data)
+        #self.tab.addTab(unverifiedTab,"Unverified")
+
+    def timeSignalChanging(self, time):
+        self.timeSignal.emit(time)
+
+    def onStartTimeChanged(self, stime):
+        self.startTimeChanged.emit(stime)
 
     def resizeEvent(self, e):
         self.tab.resize(e.size()+QSize(1,1))
 
+    def onResetSignal(self):
+        self.resetSignal.emit()
+
 class VerifiedTab(QWidget):
+    timeSignal=pyqtSignal(int)
+    startTimeChanged=pyqtSignal(int)
+    resetSignal=pyqtSignal()
     def __init__(self, _data=[]):
         super().__init__()
         self.data=_data
         self.initUI()
 
     def initUI(self):
-        self.originalSpeed=500
-        self.speed=500
+        self.originalSpeed=100
+        self.speed=100
         self.speedTimes=1.0
         self.start=False
         self.timer=QTimer()
@@ -67,11 +86,17 @@ class VerifiedTab(QWidget):
         self.hlb.addWidget(self.fforwardbtn)
         self.hlb.addStretch(1)
 
+        self.lblTime=QLabel()
+        self.lblTime.setText('00:00:00')
+        self.lblTime.setContentsMargins(QMargins(0,0,20,0))
+        self.hlb.addWidget(self.lblTime)
+
         self.vlb=QVBoxLayout()
         self.vlb.setSpacing(0)
         self.vlb.setContentsMargins(QMargins(0,0,0,0))
         self.vlb.addLayout(self.hlb)
         self.grid=GridArea.GridArea(self.data)
+        self.grid.startTimeChanged.connect(self.onStartTimeChanged)
         self.grid.setGeometry(0,0,self.size().width(),self.size().height() - 15)
         self.vlb.addWidget(self.grid)
 
@@ -82,16 +107,23 @@ class VerifiedTab(QWidget):
 
         self.setLayout(self.vlb)
 
-    def paintEvent(self, e):
-        pass
-        #qp=QPainter()
-        #qp.setPen(Qt.red)
-        #qp.begin(self)
-        #qp.drawRect(QRect(e.rect()))
-        #qp.end()
+    def onStartTimeChanged(self, sTime):
+        self.startTimeChanged.emit(sTime)
 
     def timerTick(self):
-        pass
+        if self.keepMoving:
+            # [True/False, time of moving vertical line]
+            result=self.grid.moveVLine()
+            self.keepMoving=result[0]
+            #print(CommonMethod.Second2Time(result[1]))
+            self.timeSignal.emit(result[1]*1000)
+            self.lblTime.setText(CommonMethod.Second2Time(result[1]))
+        else:
+            self.start=False
+            self.timer.stop()
+            self.playbtn.setIcon(QIcon(r'Pictures/play.png'))
+
+
     def playbtnClicked(self):
         if self.start:
             self.start=False
@@ -99,18 +131,26 @@ class VerifiedTab(QWidget):
             self.playbtn.setIcon(QIcon(r'Pictures/play.png'))
         else:
             self.start=True
+            self.keepMoving=True
             self.timer.start()
             self.playbtn.setIcon(QIcon(r'Pictures/pause.png'))
+
     def timerReset(self):
-        self.speedTimes=1
-        self.speed=self.originalSpeed*self.speedTimes
         self.timer.stop()
+        self.playbtn.setIcon(QIcon(r'Pictures/play.png'))
+        self.grid.resetVLine()
+        self.resetSignal.emit()
+
     def timerSpeedUp(self):
         self.speedTimes=self.speedTimes/2
         self.speed=self.originalSpeed*self.speedTimes
+        self.timer.setInterval(self.speed)
+
     def timerSlowDown(self):
         self.speedTimes = self.speedTimes * 2
         self.speed=self.originalSpeed*self.speedTimes
+        self.timer.setInterval(self.speed)
+
     def timeRangeChanging(self):
         value=self.timeline.getTimePeriodRange()
         self.startTime=value[0]

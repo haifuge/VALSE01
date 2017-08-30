@@ -13,7 +13,7 @@ class VerticalLine(QWidget):
         qp=QPainter()
         qp.begin(self)
         qp.setPen(QPen(QColor(0,0,0), 1, Qt.SolidLine));
-        qp.drawLine(self.width/2, 0, self.width/2, self.height)
+        qp.drawLine(self.width/2, 0, self.width/2, self.height) 
         qp.end()
 
     def setHeight(self, _height):

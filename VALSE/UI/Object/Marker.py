@@ -7,6 +7,7 @@ from Common import CommonTools
 
 class Marker(QWidget):
     weight=1
+    timeStamp=0
     def __init__(self, _color, _shape, _x=10, _y=10, _size=16, parent=None):
         super().__init__(parent)
         self.color=_color
@@ -15,7 +16,7 @@ class Marker(QWidget):
         self.yPos=_y
         self.size=_size
 
-        self.setMinimumSize(self.size,self.size)
+        self.setMinimumSize(self.size,self.size) 
         #self.move(300,300)
         
         self.setWindowFlags(Qt.FramelessWindowHint)
