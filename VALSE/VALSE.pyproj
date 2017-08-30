@@ -4,7 +4,7 @@
     <SchemaVersion>2.0</SchemaVersion>
     <ProjectGuid>769ad472-e136-4d89-b469-0183ffafddb6</ProjectGuid>
     <ProjectHome>.</ProjectHome>
-    <StartupFile>UI\EventTimeline\TimeLine.py</StartupFile>
+    <StartupFile>Windows.py</StartupFile>
     <SearchPath>
     </SearchPath>
     <WorkingDirectory>.</WorkingDirectory>
