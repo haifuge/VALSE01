@@ -31,12 +31,12 @@ class VectorTrail(QWidget):
         self.lmap.move(0,0)
 
         # test for visible and highlight marker
-        #marker=Marker.Marker(CommonTools.Color.red, CommonTools.Shape.circle, 10,10, 10, self)
-        #marker.move(100,100)
-        #marker.setVisible(True)
-        #marker.setPositionTip('100, 100')
-        #marker.setBold(2)
-        #marker.setBold(1)
+        #self.marker1=Marker.Marker(CommonTools.Color.red, CommonTools.Shape.circle, 10,10, 10, self)
+        #self.marker1.move(100,100)
+        #self.marker1.setVisible(True)
+        #self.marker1.setPositionTip('100, 100')
+        #self.marker1.setBold(2)
+        #self.marker1.setBold(1)
 
         #marker3=Marker.Marker(CommonTools.Color.green, CommonTools.Shape.circle,10,10,10,self)
         #marker3.move(150,100)
@@ -71,8 +71,13 @@ class VectorTrail(QWidget):
         
     def resizeEvent(self, e):
         self.lmap.resize(self.size())
-        self.x_ratio=self.lmap.imgWidth/self.max_x
-        self.y_ratio=self.lmap.imgHeight/self.max_y
+        self.x_ratio=self.size().width()/self.lmap.imgWidth
+        self.y_ratio=self.size().height()/self.lmap.imgHeight
+        #self.data[0].markers[0].move(self.data[0].markers[0].x()+1, self.data[0].markers[0].y()+1)
+        for p in self.data:
+            for m in p.markers:
+                m.move(m.origin_x*self.x_ratio, m.origin_y*self.y_ratio)
+        #self.repaint()
 
     def initTimer(self):
         self.timer=QTimer()
@@ -100,9 +105,12 @@ class VectorTrail(QWidget):
             for d in p.data:
                 # copy.deepcopy(p.marker)
                 marker=Marker.Marker(p.color, p.shape,10,10,12,self)
+                marker.origin_x=d[0]
+                marker.origin_y=d[1]
                 marker.move(d[0]*self.x_ratio,d[1]*self.y_ratio)
                 marker.setVisible(False)
                 marker.timeStamp=d[2]
+                marker.setPositionTip(str(d[0])+', '+str(d[1])+", "+CommonMethod.Second2Time(int(d[2])/1000))
                 p.markers.append(marker)
 
     def changeMarker(self, changes):
@@ -121,6 +129,7 @@ class VectorTrail(QWidget):
                 if changes[0]==p.id:
                     for m in p.markers:
                         m.setBold(2 if changes[2] else 1)
+
     def setStartTime(self, sTime):
         self.startTime=sTime
         for p in self.data:
@@ -128,6 +137,7 @@ class VectorTrail(QWidget):
                 if self.startTime>p.markers[i].timeStamp:
                     p.index=i-1;
                     break;
+
     # show markers from current index to time
     # index is 0 default, or number of last shown marker
     def showMarkers(self, time):
@@ -144,7 +154,8 @@ class VectorTrail(QWidget):
                 m.setVisible(False)
 
 class Map(QLabel):
-
+    imgWidth=0.0
+    imgHeight=0.0
     def __init__(self, parent=None):
         super().__init__(parent);
         

@@ -8,6 +8,8 @@ from Common import CommonTools
 class Marker(QWidget):
     weight=1
     timeStamp=0
+    origin_x=0.0
+    origin_y=0.0
     def __init__(self, _color, _shape, _x=10, _y=10, _size=16, parent=None):
         super().__init__(parent)
         self.color=_color

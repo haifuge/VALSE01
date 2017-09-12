@@ -92,6 +92,7 @@ class MainWindow(QMainWindow):
         self.mapInfo=dbop.ExecSql('select location_id, max_x, max_y, map_url from location where name=\''+self.dateInfo[3]+'\';',4)
         location_id=str(self.mapInfo[0][0])
         sql=''
+        # first {}: union all; second {}: 
         bsql=' {} select d.target_id, d.x, d.y, d.ts-{} from target t, detection d where t.location_id={} and t.target_id=d.target_id and d.ts between {} and {} '
         if self.dateInfo[2][0]==1:
             # date time to long 
